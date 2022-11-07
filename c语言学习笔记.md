@@ -2000,7 +2000,7 @@ double getAvg(int *arr, int size) {
 
 ## 十四、函数指针与回调函数
 
-### 函数指针
+**函数指针**
 
 函数指针是指向函数的指针变量。
 
@@ -2044,7 +2044,7 @@ THE BIGGEST NUMBER IS : 233
 
 
 
-### 回调函数
+**回调函数**
 
 函数指针作为某个函数的参数
 
@@ -2179,7 +2179,7 @@ int main() {
 
 C 数组允许定义可存储相同类型数据项的变量，**结构**是 C 编程中另一种用户自定义的可用的数据类型，它允许您存储不同类型的数据项。
 
-### **定义结构**
+**定义结构**
 
 为了定义结构，您必须使用 **struct** 语句。struct 语句定义了一个包含多个成员的新的数据类型，struct 语句的格式如下：
 
@@ -2246,7 +2246,7 @@ Simple2 u1, u2[20], *u3;
 
 
 
-### **结构体变量的初始化**
+**结构体变量的初始化**
 
 ```c
 #include <stdio.h>
@@ -2282,7 +2282,7 @@ int main() {
 }
 ```
 
-### **访问结构成员**
+**访问结构成员**
 
 ```c
 #include <stdio.h>
@@ -2313,11 +2313,242 @@ Goods value: 43342
 Goods goodsName: 放大房价是
 ```
 
-### 结构作为函数参数
+结构作为函数参数
 
 您可以把结构作为函数参数，传参方式与其他类型的变量或指针类似。您可以使用上面实例中的方式来访问结构变量：
 
+```c
+/*************************************************************************
+    > File Name: 03-结构体作为函数参数.c
+    > Author: Aerlany
+    > Mail: 1243535201@qq.com
+    > Created Time: Fri 28 Oct 2022 04:17:43 PM CST
+ ************************************************************************/
+
+#include <stdio.h>
+
+#define MAXLENGTH 100
+typedef struct Book {
+  int BookId;
+  char BookName[MAXLENGTH];
+} Book;
+
+void PrintBookItem(Book Book1);
+
+int main() {
+  Book Book1;
+  printf("BookId = ");
+  scanf("%d", &Book1.BookId);
+  printf("BookName = ");
+  scanf("%s", Book1.BookName);
+
+  PrintBookItem(Book1);
+}
+
+void PrintBookItem(Book Book1) {
+  printf("BookId : %d\n", Book1.BookId);
+
+  printf("BookName : %s\n", Book1.BookName);
+}
 ```
 
+指向结构的指针
+
+您可以定义指向结构的指针，方式与定义指向其他类型变量的指针相似，如下所示：
+
+```c
+struct Book{
+	int id;
+	char BookName[100];
+}
+
+struct Book *book1;
+```
+
+**案例**
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+#define MAXLENGTH 100
+
+typedef struct Book {
+  int id;
+  char bookName[MAXLENGTH];
+} Book;
+
+void PrintBookItem(Book *Book1) {
+  printf("Book id: %d\n", Book1->id);
+  printf("Book bookName: %s\n", Book1->bookName);
+}
+
+int main() {
+  Book Book1;
+
+  printf("BookId = ");
+  scanf("%d", &Book1.id);
+  printf("BookName = ");
+  scanf("%s", Book1.bookName);
+
+  PrintBookItem(&Book1);
+  return 0;
+}
+```
+
+```sh
+BookId = 1231
+BookName = 三国演义
+Book id: 1231
+Book bookName: 三国演义
+```
+
+
+
+## 十七、共用体
+
+**共用体**是一种特殊的数据类型，允许您在相同的内存位置存储不同的数据类型。您可以定义一个带有多成员的共用体，但是任何时候只能有一个成员带有值。共用体提供了一种使用相同的内存位置的有效方式。
+
+**定义共用体**
+
+为了定义共用体，您必须使用 **union** 语句，方式与定义结构类似。union 语句定义了一个新的数据类型，带有多个成员。union 语句的格式如下：
+
+```c
+union [union tag]
+{
+   member definition;
+   member definition;
+   ...
+   member definition;
+} [one or more union variables];
+```
+
+**union tag** 是可选的，每个 member definition 是标准的变量定义，比如 int i; 或者 float f; 或者其他有效的变量定义。在共用体定义的末尾，最后一个分号之前，您可以指定一个或多个共用体变量，这是可选的。下面定义一个名为 Data 的共用体类型，有三个成员 i、f 和 str：
+
+```c
+union Data
+{
+   int i;
+   float f;
+   char  str[20];
+} data;
+```
+
+现在，**Data** 类型的变量可以存储一个整数、一个浮点数，或者一个字符串。这意味着一个变量（相同的内存位置）可以存储多个多种类型的数据。您可以根据需要在一个共用体内使用任何内置的或者用户自定义的数据类型。
+
+共用体占用的内存应足够存储共用体中最大的成员。
+
+**案例**
+
+```c
+/*************************************************************************
+    > File Name: 01-共用体大小.c
+    > Author: Aerlany
+    > Mail: 1243535201@qq.com
+    > Created Time: Sun 06 Nov 2022 09:33:33 PM CST
+ ************************************************************************/
+
+#include <stdio.h>
+
+union Data {
+  int num;
+  char String[100];
+  float f;
+};
+
+int main() {
+  union Data data;
+  printf("The Size Of Union: %d\n", sizeof(data));
+
+  return 0;
+}
+```
+
+```sh
+The Size Of Union: 100
+```
+
+**访问共用体成员**
+
+为了访问共用体的成员，我们使用**成员访问运算符（.）**。成员访问运算符是共用体变量名称和我们要访问的共用体成员之间的一个句号。您可以使用 **union** 关键字来定义共用体类型的变量。
+
+```c
+/*************************************************************************
+    > File Name: 02-访问共用体成员.c
+    > Author: Aerlany
+    > Mail: 1243535201@qq.com
+    > Created Time: Sun 06 Nov 2022 09:40:41 PM CST
+ ************************************************************************/
+
+#include <stdio.h>
+#include <string.h>
+
+typedef union Data {
+  int num;
+  char String[100];
+  float f;
+} Data;
+
+int main() {
+  Data data;
+  data.num = 13222;
+  printf("data.num: %d\n", data.num);
+
+  data.f = 3.14;
+  printf("data.f: %f\n", data.f);
+
+  strcpy(data.String, "HelloWorld");
+  printf("data.String : %s\n", data.String);
+
+  return 0;
+}
+```
+
+```c
+data.num: 13222
+data.f: 3.140000
+data.String : HelloWorld
+```
+
+**注意:**
+
+共用体每次只能存储一个成员,同时对多个成员赋值只有最后一个有效;
+
+```c
+/*************************************************************************
+    > File Name: 03-访问共用体成员.c
+    > Author: Aerlany
+    > Mail: 1243535201@qq.com
+    > Created Time: Sun 06 Nov 2022 09:40:41 PM CST
+ ************************************************************************/
+
+#include <stdio.h>
+#include <string.h>
+
+typedef union Data {
+  int num;
+  char String[100];
+  float f;
+} Data;
+
+int main() {
+  Data data;
+
+  data.num = 13222;
+  data.f = 3.14;
+  strcpy(data.String, "HelloWorld");
+
+  printf("data.num: %d\n", data.num);
+  printf("data.f: %f\n", data.f);
+  printf("data.String : %s\n", data.String);
+
+  return 0;
+}
+```
+
+```c
+data.num: 1819043144
+data.f: 1143139122437582505939828736.000000
+data.String : HelloWorld
 ```
 
