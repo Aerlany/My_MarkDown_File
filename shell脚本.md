@@ -737,3 +737,47 @@ $RANDOM
 指定范围(生成[1,999]随机数)
 
 $((RANDOM % 1000))
+
+```c
+#!/bin/sh
+#判断输入参数是否为一个
+if [ $# -ne 1 ];then
+        echo "携带参数错误！！"
+        exit
+fi
+
+#从参数中获取目录名
+if [ -d $1 ];then
+        echo
+else
+        echo
+        echo "目录不存在！！"
+        exit
+fi
+#截取文件夹名`
+DIR_NAME=$(basename $1)
+DIR_PATH=$(cd $(dirname $1);pwd)
+
+#获取当前时间
+DATE=$(date +%Y-%m-%d)
+
+#定义生成的归档文件名称
+FILE=archive_${DIR_NAME}_$DATE.tar.gz
+DEST=/home/user/Temp/$FILE
+
+#开始
+echo "开始归档"
+echo
+
+tar -czf $DEST $DIR_PATH/$DIR_NAME
+
+if [ $? -eq 0 ];then
+        echo
+        echo "归档成功！！"
+else
+        echo "归档出现问题！！！"
+fi
+
+exit
+```
+

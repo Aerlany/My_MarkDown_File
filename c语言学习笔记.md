@@ -2966,7 +2966,7 @@ int fprintf(FILE *restrict stream, const char *restrict format, ...);
 
 int main() {
   FILE *fp = fopen("/tmp/fileopenTest.txt", "w+");
-  fputs("HelloWorld !!!\n", fp);
+  fputs("Aenlany HelloWorld !!!\n", fp);
   fprintf(fp, "你好 !!!\n");
   fclose(fp);
   printf("OK !!");
@@ -2978,11 +2978,15 @@ int main() {
 
 **读取文件**
 
+(一个一个字符的读)
+
 **fgetc()** 函数从 fp 所指向的输入文件中读取一个字符。返回值是读取的字符，如果发生错误则返回 **EOF**。
 
 ```c
 int fgetc( FILE * fp );
 ```
+
+(一句一句的读)
 
 函数 **fgets()** 从 fp 所指向的输入流中读取 n - 1 个字符。它会把读取的字符串复制到缓冲区 **buf**，并在最后追加一个 **null** 字符来终止字符串。
 
@@ -2998,9 +3002,143 @@ int fscanf(FILE *fp, const char *format, ...);
 
 **案例**
 
+```c
+/*************************************************************************
+    > File Name: 02-文件读取.c
+    > Author: Aerlany
+    > Mail: 1243535201@qq.com
+    > Created Time: Wed 09 Nov 2022 12:52:20 AM CST
+ ************************************************************************/
+
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+
+  char buff[255];
+
+  FILE *fp = fopen("/tmp/fileopenTest.txt", "r");
+
+  int a = fgetc(fp);
+  printf("1: a = %d\n", a);
+
+  char b[255];
+  strcpy(b, fgets(buff, 255, fp));
+  printf("2: b = %s\n", b);
+
+  fscanf(fp, "%s", buff);
+  printf("3: c = %s\n", buff);
+
+  return 0;
+}
+```
+
+```sh
+1: a = 65
+2: b = erlany HelloWorld !!!
+3: c = 你好
+```
+
+```txt
+fgets(buff,n,fp) 从fp中向后读取n个字符,将结果放入buff中
+fscanf(fp,format,buff) 从fp中以format方式读取字符存入buff中
+```
+
+
+
+**二进制 I/O 函数**
+
+下面两个函数用于二进制输入和输出：
+
+```c
+size_t fread(void *ptr, size_t size_of_elements, size_t number_of_elements, FILE *a_file);
+              
+size_t fwrite(const void *ptr, size_t size_of_elements, size_t number_of_elements, FILE *a_file);
+```
+
+这两个函数都是用于存储块的读写 - 通常是数组或结构体。
+
+
+
+## 二十一、C 预处理器	
+
+**C 预处理器**不是编译器的组成部分，但是它是编译过程中一个单独的步骤。简言之，C 预处理器只不过是一个文本替换工具而已，它们会指示编译器在实际编译之前完成所需的预处理。我们将把 C 预处理器（C Preprocessor）简写为 CPP。
+
+| 指令     | 描述                                                        |
+| :------- | :---------------------------------------------------------- |
+| #define  | 定义宏                                                      |
+| #include | 包含一个源代码文件                                          |
+| #undef   | 取消已定义的宏                                              |
+| #ifdef   | 如果宏已经定义，则返回真                                    |
+| #ifndef  | 如果宏没有定义，则返回真                                    |
+| #if      | 如果给定条件为真，则编译下面代码                            |
+| #else    | #if 的替代方案                                              |
+| #elif    | 如果前面的 #if 给定条件不为真，当前条件为真，则编译下面代码 |
+| #endif   | 结束一个 #if……#else 条件编译块                              |
+| #error   | 当遇到标准错误时，输出错误消息                              |
+| #pragma  | 使用标准化方法，向编译器发布特殊的命令到编译器中            |
+
+**预处理器实例**
+
+分析下面的实例来理解不同的指令。
+
+```c
+#define MAX_ARRAY_LENGTH 20
+```
+
+这个指令告诉 CPP 把所有的 MAX_ARRAY_LENGTH 定义为 20。使用 *#define* 定义常量来增强可读性。
+
+```c
+#include <stdio.h>
+#include "myheader.h"
+```
+
+这些指令告诉 CPP 从**系统库**中获取 stdio.h，并添加文本到当前的源文件中。下一行告诉 CPP 从本地目录中获取 **myheader.h**，并添加内容到当前的源文件中。
+
+```c
+#undef  FILE_SIZE
+#define FILE_SIZE 42
+```
+
+这个指令告诉 CPP 取消已定义的 FILE_SIZE，并定义它为 42。
+
+```c
+#ifndef MESSAGE
+   #define MESSAGE "You wish!"
+#endif
+```
+
+这个指令告诉 CPP 只有当 MESSAGE 未定义时，才定义 MESSAGE。
+
+```c
+#ifdef DEBUG
+   /* Your debugging statements here */
+#endif
+```
+
+这个指令告诉 CPP 如果定义了 DEBUG，则执行处理语句。在编译时，如果您向 gcc 编译器传递了 *-DDEBUG* 开关量，这个指令就非常有用。它定义了 DEBUG，您可以在编译期间随时开启或关闭调试。
+
+**预定义宏**
+
+ANSI C 定义了许多宏。在编程中您可以使用这些宏，但是不能直接修改这些预定义的宏。
+
+| 宏       | 描述                                                |
+| :------- | :-------------------------------------------------- |
+| __DATE__ | 当前日期，一个以 "MMM DD YYYY" 格式表示的字符常量。 |
+| __TIME__ | 当前时间，一个以 "HH:MM:SS" 格式表示的字符常量。    |
+| __FILE__ | 这会包含当前文件名，一个字符串常量。                |
+| __LINE__ | 这会包含当前行号，一个十进制常量。                  |
+| __STDC__ | 当编译器以 ANSI 标准编译时，则定义为 1。            |
+
+**案例**
+
 ```
 
 ```
+
+
+
+
 
 
 
