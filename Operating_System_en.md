@@ -55,7 +55,7 @@
 
 ------
 
-**CPU Working Cycle **(CPU工作周期)
+**CPU Working Cycle** (CPU工作周期)
 
 1. **Fetch** the first instruction from memory
 2. **Decode** it to determine its type and operands (解码来决定其类型和操作码)
@@ -65,11 +65,11 @@
 
 ------
 
-**Special CPU Registers **(寄存器)
+**Special CPU Registers** (寄存器)
 
-1. **Program counter (PC) **: keeps the memory address of the next instruction to be fetched
-2. **Stack pointer (SP) **: point to the top of the current stack in memory
-3. **Program status (PS) **: holds condition code bits and processor state (存储条件代码位和处理器状态)
+1. **Program counter (PC)**: keeps the memory address of the next instruction to be fetched
+2. **Stack pointer (SP)**: point to the top of the current stack in memory
+3. **Program status (PS)**: holds condition code bits and processor state (存储条件代码位和处理器状态)
 
 
 
@@ -166,7 +166,7 @@
 
 **4. StartUp**
 
-**5. init — the first user-space program **(systemd)
+**5. init — the first user-space program** (systemd)
 
 ------
 
@@ -174,7 +174,7 @@
 
 ## Interrupt
 
-**Modern OS are Interrupt Driven **
+**Modern OS are Interrupt Driven**
 
 1. **HW INT** by send a signal to CPU 
 2. **SW INT ** by executing a **System Call**
