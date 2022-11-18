@@ -2,7 +2,7 @@
 
 
 
-# 1.What’s an Operating System
+# Part 1. What’s an Operating System
 
 ## Definition
 
@@ -202,4 +202,299 @@ A System Call i**s how a program requests a service from an OS kernel** and **pr
 $ man 2 intro
 $ man 2 syscalls
 ```
+
+![System call](/home/user/Pictures/Screenshot from 2022-11-15 15-11-14.png)
+
+
+
+![How a system call be made](/home/user/.config/Typora/typora-user-images/image-20221115155055411.png)
+
+**How a system call can be made**:
+
+(1) User program traps to the kernel. 
+
+(2) Operating system determines service number required.
+
+(3) Operating system calls service procedure. 
+
+(4) Control is returned to user program.
+
+
+
+### **Example**
+
+**Interrupt Vector Table** (**The very first 1 KiB of x86 memory**)
+
+1. 256 entries × 4 B = 1 KiB
+2. Each entry is a complete memory address (每一个条目都是一个完整的内存地址)
+3. It’s populated by Linux and BIOS
+4. Slot 80h: address of the kernel services dispatcher (☛ sys-call table) (内核服务派遣器的地址)
+
+
+
+**System Call ( write )**
+
+**pwrite, write — write on a file**
+
+```c
+$man 2 write
+ 
+#include <unistd.h>
+ssize_t pwrite(int fildes, const void *buf, size_t nbyte,off_t offset);
+ssize_t write(int fildes, const void *buf, size_t nbyte);
+```
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+int main(int argc, char *argv[]) {
+  write(1, "HelloWorld\n", 14);
+  return EXIT_SUCCESS;
+}
+```
+
+
+
+**System call (fork)**
+
+**fork - create a child process**
+
+```c
+$man 2 fork
+
+#include <sys/types.h>
+#include <unistd.h>
+
+pid_t fork(void);
+
+```
+
+*fork()  creates  a  new  process  by  duplicating the calling process.  The new process is referred to as the child process.  The calling  process  is  referred  to  as  the  parent process.*
+
+```c
+#include <stdio.h>
+#include <unistd.h>
+int main(int argc, char *argv[]) {
+  printf("HelloWorld\n");
+  fork();
+  printf("Put a word\n");
+}
+```
+
+```c
+HelloWorld
+Put a word
+Put a word
+```
+
+
+
+**System call (exec)**
+
+*The  exec()  family  of  functions  replaces  the current process image with a new process image.*  
+
+```c
+$man 3 exec
+
+NAME
+       execl, execlp, execle, execv, execvp, execvpe - execute a file
+
+SYNOPSIS
+       #include <unistd.h>
+
+       extern char **environ;
+
+       int execl(const char *path, const char *arg, ...
+                       /* (char  *) NULL */);
+       int execlp(const char *file, const char *arg, ...
+                       /* (char  *) NULL */);
+       int execle(const char *path, const char *arg, ...
+                       /*, (char *) NULL, char * const envp[] */);
+       int execv(const char *path, char *const argv[]);
+       int execvp(const char *file, char *const argv[]);
+       int execvpe(const char *file, char *const argv[],
+                       char *const envp[]);
+
+```
+
+*Create a child process that does different things than the parent process*
+
+```c
+#include <stdio.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[]) {
+  printf("Main Process ( %d ) saying Hello!\n", getpid());
+
+  int a = fork();
+  printf("fork() return in the Parent : %d\n", a);
+  if (a == 0) {
+    printf("fork() return in the Child : %d\n", a);
+    printf("Child Process ( %d ) listing the source file...\n", getpid());
+
+    execl("/bin/ls", "", NULL);
+
+    /*execl()函数只有出错时有返回值*/
+    puts("You can't see this unless execl() failed");
+  } else {
+    int i = 60;
+    printf("Parent Process ( %d ) is sleeping for %d seconds\n", getpid(), i);
+    printf("\n");
+    sleep(i);
+  }
+
+  printf("Hello again from Process %d\n", getpid());
+
+  return 0;
+}
+
+```
+
+```sh
+Main Process ( 265161 ) saying Hello!
+Parent : 265162
+Parent Process ( 265161 ) is sleeping for 60 seconds
+
+Parent : 0
+Child : 0
+Child Process ( 265162 ) listing the source file...
+01-fork.c  02-write.c  03-exec.c  a.out  FIFO_Example.c  pipe_Example.c  test.c
+Hello again from Process 265161
+```
+
+*From this example, the order in which the fork() is run can be derived*
+
+**Don’t invoke System call directly whenever possible !!!**
+
+
+
+### **Hardware INT vs. Software INT**
+
+![HW INT and SW INT](/home/user/.config/Typora/typora-user-images/image-20221115222730359.png)
+
+
+
+# Part 2. Process And Thread
+
+## Processes
+
+**Definition:** ***A process is an instance of a program in execution***  **(定义)**
+
+Processes are like human being, they **are generated**, they are **have a lift**, they optionally generate one or more **child processes**, and eventually they **die**. But a small difference, sex is not common among processes, and each process has **just one parent**.
+
+*There are two categories of processes in Unix, namely*
+
+- **User processes**: They are operated in user mode.
+- **Kernel processes**: They are operated in kernel mode.
+
+
+
+
+
+**Process Control Block (PCB) (进程控制模块)**
+
+**Implementation:**
+
+1. *A process is the **collection of data structures** that fully describes how far the execution of the program has progressed.*
+
+2. **Each Process is represented by a PCB** 
+
+3. A PCB include : **process state, PID, program counter, registers, memory limits, list of open files.....**
+
+
+
+**Process Creation** **(进程创建)**
+
+![A Process Creation](/home/user/.config/Typora/typora-user-images/image-20221116105610135.png)
+
+**Attention:**
+
+1. *When a process is created, it is almost identical ( 相同 )to its parent, It **receives a (logical) copy of** the parent’s address space, and **executes the same code** as the parent*
+
+2. *The parent and child have **separate** ( 分开的,单独的 ) copies of the data (stack and heap)*
+
+
+
+**Example**
+
+1. fork() in c
+
+```c
+#include <stdio.h>
+#include <unistd.h>
+int main(int argc, char *argv[]) {
+  printf("HelloWorld\n");
+  fork();
+  printf("Put a word\n");
+}
+```
+
+```sh
+HelloWorld
+Put a word
+Put a word
+```
+
+2. exec()
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+int main(int argc, char *argv[]) {
+  pid_t pid;
+  pid = fork();
+  if (pid < 0) {
+    fprintf(stderr, "Fork failed");
+    exit(EXIT_FAILURE);
+  } else if (pid == 0) {
+    execlp("/bin/ls", "ls", NULL);
+  } else {
+    wait(NULL);
+    puts("Child Complete");
+    exit(EXIT_SUCCESS);
+  }
+  return 0;
+}
+```
+
+```sh
+01-fork.c  02-write.c  03-exec.c  04-exec.c  a.out  FIFO_Example.c  pipe_Example.c  test.c
+Child Complete
+```
+
+
+
+**Process State Transition**
+
+![image-20221116194207048](/home/user/.config/Typora/typora-user-images/image-20221116194207048.png)
+
+- **Ready:** The Process already has an execution condition, but does not get CPU and cannot be executed.
+- **Running:** The Process has taken over the CPU, and is running at this time.
+- **Blocked:** The state of a Process while waiting for a service, signal, external operation, etc.
+
+
+
+
+
+**CPU Switch From Process To Process**
+
+​	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
