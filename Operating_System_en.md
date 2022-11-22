@@ -381,6 +381,8 @@ Hello again from Process 265161
 
 **Definition:** ***A process is an instance of a program in execution***  **(定义)**
 
+
+
 Processes are like human being, they **are generated**, they are **have a lift**, they optionally generate one or more **child processes**, and eventually they **die**. But a small difference, sex is not common among processes, and each process has **just one parent**.
 
 *There are two categories of processes in Unix, namely*
@@ -470,6 +472,8 @@ Child Complete
 
 **Process State Transition**
 
+
+
 ![image-20221116194207048](/home/user/.config/Typora/typora-user-images/image-20221116194207048.png)
 
 - **Ready:** The Process already has an execution condition, but does not get CPU and cannot be executed.
@@ -482,19 +486,280 @@ Child Complete
 
 **CPU Switch From Process To Process**
 
+![image-20221118220923175](/home/user/.config/Typora/typora-user-images/image-20221118220923175.png)
+
+
+
+## Threads
+
+**Processes vs. Threads**
+
+- **A process = a unit of resource ownership, used to group resources together**
+
+  **A thread = a unit of scheduling, scheduled for execution on the CPU**
+
+
+
+- **Multiple threads running in one process** (*share an address space and other resource*)
+
+  **Multiple process running in one computer** (*share physical memory, disk, printers*)
+
+
+
+- **No protection between threads**
+
+  *Impossible* -- because process is the minimum unit of resource management
+
+  *unnecessary* -- a process owned by a single
+
+
+
+**Why Tread?**
+
+- **Responsiveness**
+
+  Good for **interactive** applications.
+
+  A process with **multiple** threads make great server (e.g. a web server) 
+
+  ( Have one server process, many "Worker" threads -- *if one thread blocks, others can still continue executing* )
+
+
+
+- **Economy** -- Thread are cheap!
+
+​		**Cheap to create** -- only need a stack and storage for registers
+
+​		**Use very little resource** -- don't need new address space, global data, program code, or OS resource
+
+​		**Switches are fast** -- only have to save/restore PC, SP, and registers
+
+​		**Resource sharing** -- Threads can pass data via shared memory; no need for **IPC**
+
+​		**Can take advantage of multiprocess**
+
+
+
+​	**NOTE**
+
+​	**进程间通信（IPC，InterProcess Communication）**是指在不同进程之间传播或交换信息。
+
+
+
+**Thread Characteristics** (线程特性)
+
+- **Thread States Transition**
+
+​		*Same as process states transition*
+
+
+
+- **Each Thread Has Its Own Stack**
+
+​		A typical stack stores local data and call information for (usually nested) procedure calls.
+
+​		Each thread generally has a different execution history.
+
+
+
+### **POSIX Threads**
+
+​	**IEEE: **The standard for writing **portable** threaded programs. The threads package it defines is called 	**Pthreads**, including over 60 function calls, supported by most UNIX systems.
+
+
+
+​	**NOTE**
+
+​	**POSIX**：可移植操作系统接口（Portable Operating System Interface of UNIX，缩写为 POSIX ）
+
+
+
+![image-20221121163919209](/home/user/.config/Typora/typora-user-images/image-20221121163919209.png)
+
+
+
+**Pthreads**
+
+​	***How to use pthread?***
+
+```sh
+#include<pthread.h>
+
+$ gcc thread1.c -o thread1 -pthread
+$ ./thread1
+```
+
+​	**Example**
+
+```c
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+void *hello(void *arg) {
+  for (int i = 0; i < 20; i++) {
+    puts("Thread say Hello");
+
+    sleep(1);
+  }
+  return NULL;
+}
+
+int main(void) {
+  pthread_t t;
+
+  if (pthread_create(&t, NULL, hello, NULL)) {
+  }
+
+  if (pthread_join(t, NULL)) {
+  }
+  exit(EXIT_SUCCESS);
+}
+```
+
+```c
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#define NUMBER_OF_PTHREAD 5
+
+void *Hello(void *arg) {
+
+  /*NOTE: 指针类型的转换不能如此使用*/
+  /*printf("Tread %d saying Hello !!", (int)*arg);*/
+
+  printf("Tread %d saying Hello !!\n", *(int *)arg);
+  pthread_exit(NULL);
+}
+
+int main(int argc, char *argv[]) {
+  pthread_t t[NUMBER_OF_PTHREAD];
+
+  int i;
+
+  for (i = 0; i < NUMBER_OF_PTHREAD; i++) {
+    printf("Main: Creating a now thread %d ...", i);
+
+    if (pthread_create(&t[i], NULL, Hello, (void *)&i)) {
+      printf("Error\n");
+    }
+
+    puts("Done!\n");
+  }
+  for (i = 0; i < NUMBER_OF_PTHREAD; i++) {
+    printf("Joining thread %d ...", i);
+
+    if (pthread_join(t[i], NULL)) {
+      printf("Error\n");
+    }
+
+    puts("Done\n");
+  }
+
+  exit(EXIT_SUCCESS);
+}
+```
+
+
+
+### **User-Level Threads vs. Kernel-level Threads**
+
+|                   | User-Level Threads                                           | Kernel-level Threads                                     |
+| ----------------- | ------------------------------------------------------------ | -------------------------------------------------------- |
+| **Advantages**    | Simple **representation**                                    | **Kernel has full knowledge of all threads**             |
+|                   | Simple **Management**                                        | **Good for applications that frequently block**          |
+|                   | **Fast**                                                     |                                                          |
+|                   | **Flexible**                                                 |                                                          |
+|                   |                                                              |                                                          |
+| **Disadvantages** | **Lack of coordination (配合) between threads and OS kernel** | **Significant overhead and increased kernel complexity** |
+|                   | **Requires non-blocking system calls**                       | **Slow**                                                 |
+|                   | **If one thread causes a page fault (interrupt!), the entire process blocks** |                                                          |
+
+**User-level threads** *provide a library of functions to allow user processes to create and manage their own threads.*
+
+​	**Advantages**
+
+- No need to modify the OS
+
+- Simple **representation**
+
+  *each thread is represented simply by a PC, regs, stack, and a small TCB, all stored in the user process’ address space*
+
+- Simple **Management**
+
+  *creating a new thread, switching between threads, and synchronization between threads can all be done without intervention of the kernel*
+
+- **Fast**
+
+  *thread switching is not much more expensive than a procedure call*
+
+- **Flexible**
+
+  *CPU scheduling (among threads) can be customized to suit the needs of the algorithm --each process can use a different thread scheduling algorithm*
+
 ​	
 
+​	**Disadvantages**
+
+- **Lack of coordination (配合) between threads and OS kernel**
+
+  *Process as a whole gets one time slice*
+
+  *Same time slice, whether process has 1 or 1000 tread*
+
+  *Also, up to each thread to **relinquish** control to other threads in that process*
+
+- **Requires non-blocking system calls**
+
+  *Otherwise, entire process will blocked in the kernel, even if there are runnable threads
+  left in the process*
+
+​		*part of motivation for user-level threads was not to have to modify the OS*
+
+- **If one thread causes a page fault (interrupt!), the entire process blocks**
 
 
 
+**Kernel-Level Threads** *kernel provides system calls to create and manage threads*
+
+​	**Advantages**
+
+- **Kernel has full knowledge of all threads**
+
+  *Scheduler may choose to give a process with 10 threads more time than process with
+  only 1 thread*
+
+- **Good for applications that frequently block**
+
+  
+
+​	**Disadvantages**
+
+- **Slow**
+
+  *Thread operations are 100s of times slower than for user-level threads*
+
+- **Significant overhead and increased kernel complexity** 
+
+  *Kernel must manage and schedule threads as well as processes*
+
+  *Requires a full thread control block (TCB) for each thread*
 
 
 
+### Hybrid Implementations
 
+**Combine the advantages of two**
 
+![image-20221121214729515](/home/user/.config/Typora/typora-user-images/image-20221121214729515.png)
 
+### Programming Complications
 
+1. **fork(): shall the child has the threads that its parent has?**
+2. **What happens if one thread closes a file while another is still reading from it?**
+3. **What happens if several threads notice that there is too little memory?**
 
-
-
-
+***Sometimes, threads fix the symptom, but not the problem.*** (有时,线程可以修复症状,但不能解决问题。)
