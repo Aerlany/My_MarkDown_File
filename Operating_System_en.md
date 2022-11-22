@@ -392,8 +392,6 @@ Processes are like human being, they **are generated**, they are **have a lift**
 
 
 
-
-
 **Process Control Block (PCB) (进程控制模块)**
 
 **Implementation:**
@@ -492,7 +490,7 @@ Child Complete
 
 ## Threads
 
-**Processes vs. Threads**
+### **Processes vs. Threads**
 
 - **A process = a unit of resource ownership, used to group resources together**
 
@@ -763,3 +761,97 @@ int main(int argc, char *argv[]) {
 3. **What happens if several threads notice that there is too little memory?**
 
 ***Sometimes, threads fix the symptom, but not the problem.*** (有时,线程可以修复症状,但不能解决问题。)
+
+
+
+## Process Synchronization
+
+### IPC (Interprocess Communication)
+
+**IPC issues**
+
+1. How one process can pass information to another (进程间怎样传递信息)
+2. Be sure processes do not get into each other’s way (确保进程间不要相互踩踏/阻塞)
+3. Proper sequencing when dependencies are present (存在依赖关系时的正确排序)
+
+
+
+**Two models of IPC**
+
+1. Shared memory
+2. Message passing (e.g. sockets)
+
+ 
+
+### Shared Memory
+
+***Consumers don’t try to remove objects from Buffer when it is empty***
+
+***Producers don’t try to add objects to the Buffer when it is full***
+
+![image-20221122205131028](/home/user/.config/Typora/typora-user-images/image-20221122205131028.png)
+
+
+
+**Circular Array**  (循环数组)
+
+**Bounded-Buffer Problem**
+
+![image-20221122205224274](/home/user/.config/Typora/typora-user-images/image-20221122205224274.png)
+
+![image-20221122205746278](/home/user/.config/Typora/typora-user-images/image-20221122205746278.png)
+
+
+
+**Pipe**
+
+```c
+ls | wc -l
+```
+
+- A pipe is a byte stream
+- **Unidirectional**
+- **read()** would be blocked if nothing written at the other end
+
+![image-20221122212733243](/home/user/.config/Typora/typora-user-images/image-20221122212733243.png)
+
+
+
+**Pipe instance**
+
+```
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
