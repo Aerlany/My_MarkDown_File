@@ -819,27 +819,125 @@ ls | wc -l
 
 **Pipe instance**
 
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#define BUF_SIZE 10
+
+int main(int argc, char *argv[]) {
+  int pfd[2]; /*Pipe file descriptors*/
+  char buf[BUF_SIZE];
+  ssize_t numRead;
+
+  // Create the pipe
+  pipe(pfd);
+
+  switch (fork()) {
+  case 0:          /*Child - read from pipe*/
+    close(pfd[1]); /*write end is unused*/
+
+    for (;;) { /* Read data from pipe and echo on stdout  */
+      if ((numRead = read(pfd[0], buf, BUF_SIZE)) == 0) {
+        break;
+      }
+      if (write(1, buf, numRead)) {
+      }
+      puts("");
+
+      close(pfd[0]);
+      _exit(EXIT_SUCCESS);
+    }
+
+  default:
+    /* parent - write to pipe  */
+    close(pfd[0]); /*read end is unused*/
+
+    if (write(pfd[1], argv[1], strlen(argv[1])) != strlen(argv[1])) {
+      puts("Error");
+    }
+
+    close(pfd[1]);
+
+    wait(NULL); /* wait for Child finish */
+    exit(EXIT_SUCCESS);
+  }
+}
+```
+
+
+
+**Named Pipe (FIFO) (First Input First Output)**
+
+**PIPEs pass data between related processes.**
+
+**FIFOs pass data between any processes.**
+
+```c
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#define FIFO_NAME "/tmp/myfifo"
+
+int main(int argc, char *argv[]) {
+  int fd, i, mode = 0;
+  char c;
+
+  if (argc < 2) {
+    puts("Error");
+    exit(EXIT_FAILURE);
+  }
+
+  /*检测携带参数选择模式*/
+  for (i = 1; i < argc; i++) {
+    if (strncmp(*++argv, "O_RDONLY", 8) == 0)
+      mode |= O_RDONLY;
+    if (strncmp(*argv, "O_WRONLY", 8) == 0)
+      mode |= O_WRONLY;
+    if (strncmp(*argv, "O_NONBLOCK", 10) == 0)
+      mode |= O_NONBLOCK;
+  }
+
+  /*判断FIFO文件是否存在*/
+  if (access(FIFO_NAME, F_OK) == -1) {
+    puts("myfifo be created");
+    mkfifo(FIFO_NAME, 0777);
+  }
+
+  printf("Process %d : FIFO( fd %d, mode %d) opened. \n", getpid(),
+         fd = open(FIFO_NAME, mode), mode);
+
+  if ((mode == 0) | (mode == 2048))
+    while (read(fd, &c, 1) == 1)
+      putchar(c); /*通过read函数逐字读取打印*/
+  if ((mode == 1) | (mode == 2049))
+    while ((c = getchar()) != EOF)
+      write(fd, &c, 1); /*获取屏幕输入写入到FIFO文件中*/
+  exit(EXIT_SUCCESS);
+}
+```
+
+
+
+### **Message Queues**
+
+![image-20221125153954761](/home/user/.config/Typora/typora-user-images/image-20221125153954761.png)
+
+
+
 ```
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
