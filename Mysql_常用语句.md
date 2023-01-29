@@ -292,3 +292,21 @@ select 字段/列表1，字段/列表2... from 表名 where 条件 order by 排�
   ```
 
   
+
+### 9、约束关系
+
+#### ( 外键约束 )
+
+**添加外键**
+
+```sql
+ALTER TABLE <数据表名> ADD CONSTRAINT <外键名>
+FOREIGN KEY(<列名>) REFERENCES <主表名> (<列名>);
+```
+
+**删除外键**
+
+```sql
+ALTER TABLE <表名> DROP FOREIGN KEY <外键约束名>;
+```
+
