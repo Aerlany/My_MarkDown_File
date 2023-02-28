@@ -1,6 +1,10 @@
 # An excellent c Web programming project borrows from TinyHttp
 
+## tip :You can run program in this command
 
+```sh
+gcc -O Httpd.cpp -o HttpServer -pthread
+```
 
 ## Create a server-side socket
 

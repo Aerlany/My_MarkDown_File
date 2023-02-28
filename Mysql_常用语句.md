@@ -277,6 +277,14 @@ select 字段/列表1，字段/列表2... from 表名 where 条件 order by 排�
 
 *DESC：降序。*
 
+
+
+#### **（链接查询）**
+
+
+
+
+
 ### 8、数据库的导入和导出
 
 - **导入**
@@ -308,5 +316,11 @@ FOREIGN KEY(<列名>) REFERENCES <主表名> (<列名>);
 
 ```sql
 ALTER TABLE <表名> DROP FOREIGN KEY <外键约束名>;
+```
+
+**添加外键属性**
+
+```sql
+ON DELETE CASCADE ON UPDATE CASCADE
 ```
 
