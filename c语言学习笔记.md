@@ -1,6 +1,6 @@
 
 
-# c语言学习
+# C语言学习
 
 ## 一、C 程序结构
 
@@ -3909,6 +3909,171 @@ int main(int argc, char *argv[]){
     }
     findInDir(path);
     return 0;
+}
+```
+
+
+
+# C++学习笔记
+
+## 一、C++基本输入输出
+
+C++ 的 I/O 发生在流中，流是字节序列。如果字节流是从设备（如键盘、磁盘驱动器、网络连接等）流向内存，这叫做**输入操作**。如果字节流是从内存流向设备（如显示屏、打印机、磁盘驱动器、网络连接等），这叫做**输出操作**。
+
+下列的头文件在 C++ 编程中很重要。
+
+| 头文件     | 函数和描述                                                   |
+| :--------- | :----------------------------------------------------------- |
+| <iostream> | 该文件定义了 **cin、cout、cerr** 和 **clog** 对象，分别对应于标准输入流、标准输出流、非缓冲标准错误流和缓冲标准错误流。 |
+| <iomanip>  | 该文件通过所谓的参数化的流操纵器（比如 **setw** 和 **setprecision**），来声明对执行标准化 I/O 有用的服务。 |
+| <fstream>  | 该文件为用户控制的文件处理声明服务。我们将在文件和流的相关章节讨论它的细节。 |
+
+
+
+**标准输出流（cout）**
+
+预定义的对象 **cout** 是 **iostream** 类的一个实例。cout 对象"连接"到标准输出设备，通常是显示屏。**cout** 与流插入运算符 << 结合使用
+
+
+
+**标准输入流（cin）**
+
+预定义的对象 **cin** 是 **iostream** 类的一个实例。，C++ 编译器根据要输入值的数据类型，选择合适的流提取运算符来提取值，并把它存储在给定的变量中。
+
+流提取运算符 >> 在一个语句中可以多次使用，如果要求输入多个数据，可以使用如下语句：
+
+```C++
+cin >> name >> age;
+```
+
+这相当于下面两个语句：
+
+```c++
+cin >> name;
+cin >> age;
+```
+
+
+
+**标准错误流（cerr）**
+
+预定义的对象 **cerr** 是 **iostream** 类的一个实例。cerr 对象附属到标准输出设备，通常也是显示屏，但是 **cerr** 对象是非缓冲的，且每个流插入到 cerr 都会立即输出。
+
+
+
+**标准日志流（clog）**
+
+预定义的对象 **clog** 是 **iostream** 类的一个实例。clog 对象附属到标准输出设备，通常也是显示屏，但是 **clog** 对象是缓冲的。这意味着每个流插入到 clog 都会先存储在缓冲区，直到缓冲填满或者缓冲区刷新时才会输出。
+
+```c++
+#include <iostream>
+using namespace std;
+int main(int argc, char *argv[]) {
+
+  // 输出
+  char str[] = "Hello World";
+  cout << str << endl;
+  cout << "value of str :" << str << endl;
+
+  // 输入
+  char name[10];
+  cout << "What's your name:";
+  cin >> name;
+  cout << "Your name is: " << name << endl;
+
+  // 输出错误
+  char error[] = "File Not Found...";
+  cerr << error << endl;
+
+  // 输出日志
+  clog << error << endl;
+}
+```
+
+
+
+## 二、C++类和对象
+
+C++ 在 C 语言的基础上增加了面向对象编程，C++ 支持面向对象程序设计。**类是 C++ 的核心特性，通常被称为用户定义的类型**。
+
+类用于指定对象的形式，它包含了数据表示法和用于处理数据的方法。**类中的数据和方法称为类的成员。函数在一个类中被称为类的成员。**
+
+
+
+**C++ 类定义**
+
+```c++
+#include <iostream>
+
+class className {
+public:               // 关键字修饰符：private/public/protected
+  int variables;      // 成员变量
+  void functions() {} // 成员方法
+};
+
+int main(int argc, char *argv[]) {}
+```
+
+1. 关键字 **public** 确定了类成员的访问属性。在类对象作用域内，公共成员在类的外部是可访问的。您也可以指定类的成员为 **private** 或 **protected**。
+
+2. 类定义是以关键字 **class** 开头，后跟类的名称。类的主体是包含在一对花括号中。类定义后必须跟着一个分号或一个声明列表。
+
+
+
+**C++ 对象定义**
+
+类提供了对象的蓝图，所以基本上，对象是根据类来创建的。声明类的对象，就像声明基本类型的变量一样。
+
+```C++
+className object;
+```
+
+类的对象的公共数据成员可以使用直接成员访问运算符 **.** 来访问。
+
+但是私有的成员（**private**）和受保护的成员（**protected**）不能使用直接成员访问运算符 (.) 来直接访问。
+
+要访问需要其所在类提供方法。
+
+```
+object.variable;
+```
+
+
+
+**C++ 类成员函数**
+
+类的成员函数是指那些把定义和原型写在类定义内部的函数，就像类定义中的其他变量一样。类成员函数是类的一个成员，它可以操作类的任意对象，可以访问对象中的所有成员。
+
+成员函数可以定义在类定义内部，或者在类中先声明再在类外部使用**范围解析运算符 ::** 来实现。在类定义中定义的成员函数把函数声明为**内联**的，即便没有使用 inline 标识符。
+
+```c++
+#include <iostream>
+using namespace std;
+
+class Cube {
+private:
+  int length;
+  int width;
+  int height;
+
+public:
+  int getLength() { return length; }
+  void setLength(int length) { this->length = length; }
+  void setWidth(int width) { this->width = width; }
+  void setHeight(int height) { this->height = height; }
+
+  int getVolume();
+};
+
+int Cube::getVolume() { return length * width * height; }
+
+int main(int argc, char *argv[]) {
+  Cube box;
+  box.setLength(8);
+  box.setWidth(8);
+  box.setHeight(8);
+
+  cout << "The volume of box : " << box.getVolume() << endl;
 }
 ```
 
