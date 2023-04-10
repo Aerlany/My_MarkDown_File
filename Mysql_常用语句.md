@@ -281,7 +281,11 @@ select 字段/列表1，字段/列表2... from 表名 where 条件 order by 排�
 
 #### **（链接查询）**
 
+内连接 （inner join）
 
+```
+select student.name,teacher.name from student inner join teacher on student.teacher_id == teacher.id
+```
 
 
 
