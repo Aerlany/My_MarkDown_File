@@ -41,7 +41,7 @@ scp -r root@192.168.0.101:/var/www/test /var/www/
 ```
 
  
- 
+
 
 ## 4、上传目录到服务器
 
@@ -55,4 +55,17 @@ scp -r local_dir username@servername:remote_dir
 scp -r test root@192.168.0.101:/var/www/
 ```
 
-  
+# 二、使用ssh工具对远端服务器进行快捷链接
+
+**生成ssh密钥对**
+
+```sh
+ ssh-keygen 
+```
+
+**设置远端密钥对**
+
+```sh
+ssh-copy-id 用户@127.0.0.1
+```
+

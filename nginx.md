@@ -102,10 +102,10 @@ http {
 
         #access_log  logs/host.access.log  main;
 
-        location / {
-            root   html;
-            index  index.html index.htm;
-        }
+            location / {
+                root   html;
+                index  index.html index.htm;
+            }
 
         #error_page  404              /404.html;
 

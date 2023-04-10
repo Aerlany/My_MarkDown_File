@@ -425,3 +425,222 @@ systemctl disable <service-name>
 systemctl is-enabled <service-name>
 ```
 
+## 三、mysql安装步骤
+
+#### 1.更新 yum
+
+在使用`yum`安装 MySQL 前，先更新 yum
+
+```javascript
+yum update -y
+```
+
+#### 2. 添加 MySQL 的 yum 仓库源
+
+Mysql 仓库源地址: https://dev.mysql.com/downloads/repo/yum/
+
+选择 CentOS 7 版本的 mysql 源
+
+![img](https://ask.qcloudimg.com/http-save/yehe-8223537/6445c514ea6bd681d45752ed5afeb29b.png?imageView2/2/w/2560/h/7000)
+
+ 对应的命令操作为: 安装 `wget` 工具:
+
+```javascript
+sudo yum install -y wget 
+```
+
+使用 `wget` 下载 mysql yum 源:
+
+```javascript
+wget https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
+```
+
+添加 mysql yum 源(在 wget 的下载目录,紧接着上一命令,则无需调整):
+
+```javascript
+sudo yum localinstall mysql80-community-release-el7-3.noarch.rpm
+```
+
+安装 `yum` 工具 `yum-utils` :
+
+```javascript
+sudo yum install -y yum-utils
+```
+
+查看可用的 mysql :
+
+```javascript
+yum repolist enabled | grep "mysql.*-community.*"
+```
+
+此时会看到当前可用的 MySQL 版本为 `mysql80`, 这是因为最新 mysql 最新版为 `8.0` 版本
+
+#### 3.查看所有的 mysql 版本
+
+```javascript
+yum repolist all | grep mysql
+```
+
+查询结果:
+
+![img](https://ask.qcloudimg.com/http-save/yehe-8223537/8b501f8e4ccb6b6ff03ae76ab1908510.png?imageView2/2/w/2560/h/7000)
+
+#### 3.2 启用指定版本的 mysql
+
+在 **2.2** 中可以看到目前启用(`enable`)的是 `mysql80`,如果需要安装 mysql 5.7 ,则需要先禁用(`disable`) mysql8.0,然后启用(`enable`)mysql5.7 禁用 mysql8.0:
+
+```javascript
+sudo yum-config-manager --disable mysql80-community
+```
+
+
+
+启用 mysql 5.7
+
+```javascript
+sudo yum-config-manager --enable mysql57-community
+```
+
+
+
+校验当前启用(`enable`)的 mysql 版本是否为 5.7:
+
+```javascript
+yum repolist enabled | grep mysql
+```
+
+
+
+查询结果:
+
+![img](https://ask.qcloudimg.com/http-save/yehe-8223537/0c1576b962b24f830bd8fb38a8063155.png?imageView2/2/w/2560/h/7000)
+
+ 从结果中可以看出，当前启用的 mysql 版本为 5.7,没有问题
+
+#### 4. 安装 mysql
+
+在步骤 **3** 中已经设置启用的mysql版本为 5.7,接下来则直接进行安装
+
+安装 mysql
+
+```javascript
+sudo yum install -y mysql-community-server
+```
+
+
+
+待命令执行结束，安装即完成 启动 mysql 服务:
+
+```javascript
+sudo service mysqld start
+```
+
+
+
+查看 mysql 服务状态:
+
+```javascript
+sudo service mysqld status
+```
+
+
+
+#### 5 .MySQL 初始化设置
+
+从 MySQL 5.7 开始，mysql 安装之后，会默认随机生成一个临时密码,因此登录之后需要修改密码
+
+查看生成的初始密码:
+
+```javascript
+sudo grep 'temporary password' /var/log/mysqld.log
+```
+
+
+
+使用初始密码进行登录:
+
+```javascript
+mysql -u root -p
+```
+
+
+
+登录成功之后设置新密码:
+
+```javascript
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass4!';
+```
+
+设置密码安全性（以支持简单密码）
+
+```sql
+set global validate_password_policy = 'LOW';
+```
+
+```sql
+set global validate_password_length = 6;
+```
+
+设置完记得刷新权限
+
+```sql
+flush privileges;
+```
+
+
+
+**注意**: 设置的**新密码必须包含大写字母、小写字母、数字、标点符号，且密码长度至少为 8**
+
+密码设置之后安装即完成
+
+#### 6. 设置 MySQL开机启动
+
+MySLQ 安装完成之后运行的服务名称为: `mysqld` CentOS 7 使用 `systemctl` 命令工具操作服务:
+
+| 启动  | 停止 | 重启    | 开机启动 | 关闭开机启动 |
+| :---- | :--- | :------ | :------- | :----------- |
+| start | stop | restart | enable   | disable      |
+
+开机启动命令:
+
+```javascript
+systemctl enable mysqld
+```
+
+
+
+#### 7 .设置远程连接
+
+登录 mysql(使用新设置的密码)
+
+```javascript
+mysql -u root -p
+```
+
+
+
+登录成功之后执行以下命令:
+
+```javascript
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'yourNewPassword' WITH GRANT OPTION;
+```
+
+
+
+其中 `yourNewPassword` 即为刚才设置的新密码 刷新权限
+
+```javascript
+FLUSH PRIVILEGES;
+```
+
+
+
+到这里远程连接已经设置成功
+
+#### 8 .配置文件
+
+mysql 的配置文件目录为:
+
+```javascript
+/etc/my.cnf
+```
