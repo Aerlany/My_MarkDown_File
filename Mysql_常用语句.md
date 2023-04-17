@@ -328,3 +328,145 @@ ALTER TABLE <表名> DROP FOREIGN KEY <外键约束名>;
 ON DELETE CASCADE ON UPDATE CASCADE
 ```
 
+
+
+## Mysql拓展
+
+### 一、跳过密码验证登录
+
+在mysql配置文件`/etc/my.cnf`中加入
+
+```sql
+skip-grant-tables
+```
+
+### 二、mysql用户及用户权限管理
+
+#### 1.添加用户
+
+`host：指定该用户在哪个主机上可以登陆
+如果是本地用户可用localhost;
+如果想让该用户可以从任意远程主机登陆，可以使用通配符%;`
+
+```sql
+create user '用户名'@'%' identified by '密码';//所有主机可登录
+create user '用户名'@'localhost' identified by '密码';//仅本地可登录
+create user '用户名'@'192.168.3.%' identified by '密码';//指定哪些主机（以192.168.3为前缀）可以登录
+```
+
+#### 2. 查看用户信息
+
+```powershell
+select * from mysql.user;//查看所有用户所有信息
+select user, host, authentication_string from mysql.user;//查看用户名、host、已加密密码以及
+```
+
+#### 3. 删除用户
+
+```sql
+drop user '用户名'@'host';
+```
+
+#### 4. 修改用户信息
+
+```sql
+alter user '用户名'@'host' identified by '密码';//修改密码
+rename user '用户名'@'host' to '新用户名'@'新host';//修改用户名、host
+```
+
+#### 5. 查看用户权限
+
+```sql
+show grants;//查看当前用户权限
+show grants for '用户名'@'host'//查看指定用户权限
+```
+
+#### 6. 用户授权
+
+```sql
+grant 权限 on 数据库名.表名 to '用户名'@'host';
+grant 权限1,权限2... on 数据库名.表名 to '用户名'@'host';//可同时授予多个权限
+```
+
+#### 7. 插销用户权限
+
+```sql
+revoke 权限 on 数据库名.表名 from '用户名'@'host';
+```
+
+
+
+### 三、mysql误删MySQL的root用户解决方法
+
+`进入mysql安全模式`
+
+```sql
+use mysql 
+```
+
+```sql
+insert into user set user='root',ssl_cipher='',x509_issuer=''，x509_subject='';
+```
+
+```sql
+ update user set Host='localhost',select_priv='y', insert_priv='y',update_priv='y',Alter_priv='y',delete_priv='y',create_priv='y',
+
+drop_priv='y',reload_priv='y',shutdown_priv='y',Process_priv='y',file_priv='y',grant_priv='y',References_priv='y',index_priv='y',
+
+create_user_priv='y',show_db_priv='y',super_priv='y',create_tmp_table_priv='y',Lock_tables_priv='y',execute_priv='y',
+
+repl_slave_priv='y',repl_client_priv='y',create_view_priv='y',show_view_priv='y',create_routine_priv='y',alter_routine_priv='y',
+
+create_user_priv='y' where user='root';
+```
+
+`关闭安全模式 重启服务 修改密码 刷新权限`
+
+```sql
+
+```
+
+```sql
+flush privileges; 
+```
+
+
+
+### 四、修改密码安全策略
+
+##### 1. 查看当前密码安全策略
+
+```sql
+mysql> select @@validate_password_policy;
+```
+
+##### 2. 查看具体的设置项
+
+```sql
+mysql> SHOW VARIABLES LIKE 'validate_password%';  
+```
+
+##### 3. 修改validate_password_policy参数的值（等级为low）
+
+```sql
+mysql> set global validate_password_policy=0;
+```
+
+##### 4. 修改validate_password_length为6
+
+```sql
+mysql> set global validate_password_length=6;
+```
+
+##### 5.修改密码
+
+```sql
+mysql> alter user '用户名'@'host' identified by '密码';
+```
+
+##### 6.刷新权限
+
+```sql
+mysql> flush privileges; 
+```
+
