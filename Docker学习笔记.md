@@ -353,6 +353,31 @@ Deleted: sha256:feff1495e6982a7e91edc59b96ea74fd80e03674d92c7ec8a502b417268822ff
 # 不会删除整个文件系统（联合文件系统思想）
 ```
 
+##### 镜像加速
+
+`对于使用 systemd 的系统，请在 /etc/docker/daemon.json 中写入如下内容`
+
+```json
+{"registry-mirrors":["https://reg-mirror.qiniu.com/"]}
+```
+
+`重启服务`
+
+```sh
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
+
+##### 更新镜像
+
+`更新镜像之前，我们需要使用镜像来创建一个容器`
+
+```
+
+```
+
+
+
 
 
 ### 容器命令
@@ -368,7 +393,7 @@ Status: Downloaded newer image for centos:latest
 docker.io/library/centos:latest
 ```
 
-##### docker run
+##### 运行镜像
 
 ```sh
 docker run [参数] image
@@ -390,7 +415,7 @@ example:
 
 ```
 
-##### docker ps
+##### 查看已创建的容器
 
 ```shell
 docker ps [参数]
@@ -401,4 +426,169 @@ docker ps [参数]
 ```
 
 
+
+##### 启动已停止运行的容器
+
+```sh
+# 先查看之前创建的容器
+docker ps -a
+
+[root@localhost etc]# docker ps -a
+CONTAINER ID   IMAGE    COMMAND  CREATED       STATUS             		NAMES
+7764bd4275d6   ubuntu   "bash"   5 days ago    Exited (0) 5 days ago    ubuntuUser
+```
+
+使用 `docker start` 启动一个已停止的容器：
+
+```sh
+docker start 7764bd4275d6
+```
+
+
+
+##### 停止容器
+
+```sh
+docker stop <容器id>
+```
+
+
+
+##### 重启容器
+
+```sh
+docker restart <container_id>
+```
+
+
+
+##### 进入容器
+
+当使用 `-d`参数时，启动的容器会进入后台。若想要进入容器：
+
+- ```bash
+  docker attach <container_id>
+  ```
+
+- ```sh
+  docker exec -it <container_id> /bin/bash
+  ```
+
+  `区别 ：attach 进入到容器，当退出时容器会停止; 而 exec 进入则不会`
+
+##### 导出容器
+
+```sh
+docker export <container_id> > TestName.tar
+```
+
+##### **导入容器快照**
+
+使用 `docker import` 导入镜像
+
+```sh
+cat docker/ubuntu.tar | docker import - test/ubuntu:v1
+```
+
+```bash
+[root@localhost ~]# cat TestName.tar | docker import - test/ubantu:version1.0
+sha256:dd4d4aab8854eb93d10d5fcd50bbaddcf1b7014a1435c7293e578b7d673dfebe
+[root@localhost ~]# docker images 
+REPOSITORY    TAG          IMAGE ID       CREATED          SIZE
+test/ubantu   version1.0   dd4d4aab8854   16 seconds ago   1.07GB
+
+```
+
+当然 也可以通过指定 `URL` 进行导入
+
+```bash
+docker import http://example.com/exampleimage.tgz example/imagerepo
+```
+
+##### 删除容器
+
+删除容器使用 `docker rm` 命令：
+
+```
+$ docker rm -f 1e560fca3906
+```
+
+##### 端口映射
+
+接下来让我们尝试使用 docker 构建一个 web 应用程序。
+
+我们将在docker容器中运行一个 `Python Flask` 应用来运行一个web应用。
+
+```sh
+docker pull training/webapp
+docker run -d -P training/webapp python app.py
+```
+
+```sh
+[root@localhost ~]# docker ps 
+CONTAINER ID   IMAGE             COMMAND           CREATED         STATUS         PORTS   
+ca447d073d31   training/webapp   "python app.py"   6 seconds ago   Up 6 seconds   0.0.0.0:32768->5000/tcp, :::32768->5000/tcp  
+```
+
+可以看到容器信息新增`PORTS`列 `0.0.0.0:32768->5000/tc`代表容器的`5000`端口映射到本机`32768`端口
+
+当然我们也可以手动指定端口`docker run -d -p 5000:5000 training/webapp python app.py`
+
+当我们使用`docker run `时可以指定容器端口
+
+```sh
+-p	   指定端口
+	-p ip:主机端口
+	-p 主机端口：容器端口
+	-p 容器端口
+
+-P	   随机指定端口
+```
+
+**网络端口的快捷方式**
+
+通过 **docker ps** 命令可以查看到容器的端口映射，**docker** 还提供了另一个快捷方式 **docker port**，使用 **docker port** 可以查看指定 （ID 或者名字）容器的某个确定端口映射到宿主机的端口号。
+
+```sh
+docker port <container_name>
+```
+
+```bash
+docker port <container_id>
+```
+
+##### 查看容器日志
+
+```bash
+docker logs <container_name/container_id>
+
+# Options
+-f --follow 实时输出
+-t --timestamps 显示时间戳
+
+```
+
+```sh
+      --details        Show extra details provided to logs
+  -f, --follow         Follow log output
+      --since string   Show logs since timestamp (e.g. "2013-01-02T13:23:37Z") or relative (e.g. "42m" for 42 minutes)
+  -n, --tail string    Number of lines to show from the end of the logs (default "all")
+  -t, --timestamps     Show timestamps
+      --until string   Show logs before a timestamp (e.g. "2013-01-02T13:23:37Z") or relative (e.g. "42m" for 42 minutes)
+
+```
+
+##### 查看容器内进程
+
+```bash
+docker top <container_name/container_id>
+```
+
+##### 查看容器详细信息
+
+输出结构为一个`JSON`包含该容器详细信息
+
+```bash
+docker inspect <container_name/container_id>
+```
 
