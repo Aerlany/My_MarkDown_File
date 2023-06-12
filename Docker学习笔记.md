@@ -162,6 +162,16 @@ sudo rm -rf /var/lib/docker
 
 ## Docker 底层原理
 
+### Docker 镜像加载原理
+
+**联合文件系统**
+
+Docker 镜像是怎么实现增量的修改和维护的？ 每个镜像都由很多层次构成，Docker 使用 **Union FS** 将这些不同的层结合到一个镜像中去。
+
+通常 Union FS 有两个用途, 一方面可以实现不借助 LVM、RAID 将多个 disk 挂到同一个目录下,另一个更常用的就是将一个只读的分支和一个可写的分支联合在一起，Live CD 正是基于此方法可以允许在镜像不变的基础上允许用户在其上进行一些写操作。 Docker 在 AUFS 上构建的容器也是利用了类似的原理。
+
+
+
 ### Docker 运行流程
 
 ```sh
@@ -232,7 +242,9 @@ docker 命令 --help #帮助命令
 
 ### 镜像命令
 
-##### docker images
+##### 查看本地镜像
+
+**docker images**
 
 ```sh
 docker images #查看docker全部镜像
@@ -249,7 +261,9 @@ CREATED	   #创建时间
 SIZE       #大小
 ```
 
-##### docker search
+##### 搜索镜像
+
+**docker search**
 
 ```sh
 docker search -- #搜索镜像
@@ -268,7 +282,11 @@ example:
 [user@localhost ~]$ sudo docker search --filter=stars=3000 mysql 
 ```
 
-##### docker pull
+
+
+##### 拉取镜像
+
+**docker pull**
 
 ```sh
 docker pull -- #下载指定镜像
@@ -324,7 +342,13 @@ docker.io/library/mysql:5.7
 
 ```
 
-##### docker rmi
+
+
+##### 删除镜像
+
+**docker rmi**
+
+**注：** 在删除一个镜像时应该确保没有使用其镜像构建的容器
 
 ```sh
 docker rmi -- #删除镜像（一般通过镜像id）
@@ -370,9 +394,34 @@ sudo systemctl restart docker
 
 ##### 更新镜像
 
-`更新镜像之前，我们需要使用镜像来创建一个容器`
+`更新镜像之前，我们需要使用镜像来创建一个容器` 当我们对容器进行更改后
 
+```bash
+➜  ~ docker ps 
+CONTAINER ID   IMAGE     COMMAND   CREATED       STATUS          PORTS     NAMES
+7764bd4275d6   ubuntu    "bash"    6 weeks ago   Up 45 minutes             ubuntuUser
 ```
+
+**使用 docker commit 提交镜像**
+
+```shell
+docker commit -m='Hadoop and Hbase' -a='Aerlany' 7764bd4275d6 hadoop_and_hbase:1.0
+```
+
+-m : 提交的描述信息
+
+-a : 指定镜像作者
+
+7764bd4275d6 : 需要更新的容器ID
+
+hadoop_and_hbase:1.0 : 创建的目标镜像名:tag
+
+```bash
+➜  ~ docker images
+REPOSITORY         TAG       IMAGE ID       CREATED          SIZE
+hadoop_and_hbase   1.0       9d0a03fb6e8f   18 seconds ago   6.01GB
+mysql              5.7       c20987f18b13   17 months ago    448MB
+ubuntu             latest    ba6acccedd29   20 months ago    72.8MB
 
 ```
 
@@ -476,7 +525,7 @@ docker restart <container_id>
 
   `区别 ：attach 进入到容器，当退出时容器会停止; 而 exec 进入则不会`
 
-##### 导出容器
+##### 导出容器快照
 
 ```sh
 docker export <container_id> > TestName.tar
@@ -591,4 +640,17 @@ docker top <container_name/container_id>
 ```bash
 docker inspect <container_name/container_id>
 ```
+
+### 数据卷volumes
+
+数据卷是一个可供一个或多个容器使用的特殊目录，它绕过 UFS，可以提供很多有用的特性：
+
+- 数据卷可以在容器之间共享和重用
+- 对数据卷的修改会立马生效
+- 对数据卷的更新，不会影响镜像
+- 卷会一直存在，直到没有容器使用
+
+**数据卷的使用，类似于 Linux 下对目录或文件进行 mount。**
+
+#####  创建一个数据卷
 
