@@ -281,10 +281,41 @@ select 字段/列表1，字段/列表2... from 表名 where 条件 order by 排�
 
 #### **（链接查询）**
 
-内连接 （inner join）
+`INNER JOIN` 关键字选择在两个表中具有匹配值的记录。
 
+![MySQL INNER JOIN](https://www.w3schools.cn/mysql/img_innerjoin.gif)
+
+```sql
+SELECT column_name(s)
+FROM table1
+INNER JOIN table2
+ON table1.column_name = table2.column_name;
 ```
-select student.name,teacher.name from student inner join teacher on student.teacher_id == teacher.id
+
+
+
+`LEFT JOIN` 关键字返回左表（table1）中的所有记录，以及右表（table2）中的匹配记录（如果有）。
+
+![MySQL LEFT JOIN](https://www.w3schools.cn/mysql/img_leftjoin.gif)
+
+```sql
+SELECT column_name(s)
+FROM table1
+LEFT JOIN table2
+ON table1.column_name = table2.column_name;
+```
+
+
+
+`RIGHT JOIN` 关键字返回右表（table2）中的所有记录，以及左表（table1）中的匹配记录（如果有）。 p>
+
+![MySQL RIGHT JOIN](https://www.w3schools.cn/mysql/img_rightjoin.gif)
+
+```sql
+SELECT column_name(s)
+FROM table1
+RIGHT JOIN table2
+ON table1.column_name = table2.column_name;
 ```
 
 
@@ -293,13 +324,13 @@ select student.name,teacher.name from student inner join teacher on student.teac
 
 - **导入**
 
-  ```
+  ```shell
   source 相对路径
   ```
 
 - **导出**
 
-  ```sql
+  ```shell
   mysqldump -u 用户名 -p 数据库名 > 导出的文件名
   ```
 

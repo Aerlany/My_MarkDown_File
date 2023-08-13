@@ -760,3 +760,185 @@ sudo mount /dev/sda1 /mnt/test
 sudo umount /mnt/test
 ```
 
+## 六、Linux  nginx 安装指南
+
+安装epel-release源
+
+```sh
+sudo yum install epel-release
+```
+
+下载nginx
+
+```sh
+sudo yum install nginx
+```
+
+检查安装
+
+```sh
+nginx -vnginx -v
+```
+
+**nginx 配置**
+
+```sh
+# nginx 配置文件
+vim /etc/nginx/nginx.conf
+```
+
+```sh
+# For more information on configuration, see:
+#   * Official English Documentation: http://nginx.org/en/docs/
+#   * Official Russian Documentation: http://nginx.org/ru/docs/
+
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+# Load dynamic modules. See /usr/share/doc/nginx/README.dynamic.
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 4096;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    # Load modular configuration files from the /etc/nginx/conf.d directory.
+    # See http://nginx.org/en/docs/ngx_core_module.html#include
+    # for more information.
+    include /etc/nginx/conf.d/*.conf;
+
+    #support cross domain access
+    add_header Access-Control-Allow-Origin *;
+    add_header Access-Control-Allow-Headers X-Requested-With;
+    add_header Access-Control-Allow-Methods GET,POST,OPTIONS;
+
+
+    server {
+        listen       80;
+        listen       [::]:80;
+        server_name  _;
+        root         /usr/share/nginx/html;
+
+        # Load configuration files for the default server block.
+        include /etc/nginx/default.d/*.conf;
+
+        error_page 404 /404.html;
+        location = /404.html {
+        }
+
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+        }
+
+        location /user {
+            proxy_pass http://43.140.201.70:8080;
+			
+		#CORS 配置
+        add_header 'Access-Control-Allow-Origin' '*';
+	    add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+	    #是否允许cookie传输
+        add_header 'Access-Control-Allow-Credentials' 'true';
+	    add_header 'Access-Control-Allow-Headers' 'Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,X-Data-Type,X-Requested-With,X-Data-Type,X-Auth-Token';
+            
+            #针对浏览器的options预请求直接返回200，否则会被403 forbidden--invalie CORS request
+            if ( $request_method = 'OPTIONS' ) { 
+								return 200;
+            } 
+        }
+
+        location /courseInfo {
+            proxy_pass http://43.140.201.70:8080;
+	}
+        location /courseExam {
+            proxy_pass http://43.140.201.70:8080;
+	}
+        location /courseExamPaper {
+            proxy_pass http://43.140.201.70:8080;
+	}
+        location /student {
+            proxy_pass http://43.140.201.70:8080;
+	}
+    }
+
+# Settings for a TLS enabled server.
+#
+#    server {
+#        listen       443 ssl http2;
+#        listen       [::]:443 ssl http2;
+#        server_name  _;
+#        root         /usr/share/nginx/html;
+#
+#        ssl_certificate "/etc/pki/nginx/server.crt";
+#        ssl_certificate_key "/etc/pki/nginx/private/server.key";
+#        ssl_session_cache shared:SSL:1m;
+#        ssl_session_timeout  10m;
+#        ssl_ciphers HIGH:!aNULL:!MD5;
+#        ssl_prefer_server_ciphers on;
+#
+#        # Load configuration files for the default server block.
+#        include /etc/nginx/default.d/*.conf;
+#
+#        error_page 404 /404.html;
+#            location = /40x.html {
+#        }
+#
+#        error_page 500 502 503 504 /50x.html;
+#            location = /50x.html {
+#        }
+#    }
+
+}
+
+```
+
+## 七、Linux  ssh免密登录
+
+```sh
+# 生成密钥
+ssh-keygen
+```
+
+将公钥上传置服务器更名为authorized_keys
+
+```sh
+scp id_rsa.pub root@192.168.0.0.1 
+```
+
+或者
+
+```shell
+ssh-copy-id root@192.168.1.106
+```
+
+## 八、Linux  NVM安装配置
+
+```sh
+# 配置镜像
+export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node/
+export NVM_IOJS_ORG_MIRROR=http://npm.taobao.org/mirrors/iojs
+```
+
+## 九、Linux  字体目录
+
+```sh
+/usr/share/fonts
+```
+

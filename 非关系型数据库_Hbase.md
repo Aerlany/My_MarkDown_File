@@ -313,7 +313,7 @@ Shell 命令
 
 在HBase中用delete以及deleteall命令进行删除数据操作，它们的区别是：1. delete用于删除一个数据，是put的反向操作；2. deleteall操作用于删除一行数据。
 
-\1. delete命令
+1. delete命令
 
 ```bash
   delete 'student','95001','Ssex'
@@ -324,7 +324,7 @@ Shell 命令
 命令执行截图如下， 即删除了student表中95001行下的Ssex列的所有数据。
 ![img](https://dblab.xmu.edu.cn/blog/wp-content/uploads/2015/09/%E9%80%89%E5%8C%BA_014.png)
 
-\2. deleteall命令
+2. deleteall命令
 
 ```bash
   deleteall 'student','95001'
@@ -338,7 +338,7 @@ Shell 命令
 - 查看数据
   HBase中有两个用于查看数据的命令：1. get命令，用于查看表的某一行数据；2. scan命令用于查看某个表的全部数据
 
-\1. get命令
+1. get命令
 
 ```bash
   get 'student','95001'
@@ -349,7 +349,7 @@ Shell 命令
 命令执行截图如下， 返回的是‘student’表‘95001’行的数据。
 ![img](https://dblab.xmu.edu.cn/blog/wp-content/uploads/2015/09/%E9%80%89%E5%8C%BA_012.png)
 
-\2. scan命令
+2. scan命令
 
 ```bash
   scan 'student'
@@ -544,5 +544,7 @@ scan 'student',{LIMIT=>3}
 delete 'student','3'
 # 删除指定行中指定列的数据
 delete 'student','3','baseinfo:name'
+# 删除一行数据
+deleteAll '行键'
 ```
 
