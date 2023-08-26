@@ -1,4 +1,4 @@
-# Linux常用命令
+# Linux常用技巧
 
 ## 一、Linux systemd
 
@@ -421,7 +421,7 @@ systemctl disable <service-name>
 
 #### 8.查看是否自启
 
-```javascript
+```bash
 systemctl is-enabled <service-name>
 ```
 
@@ -938,7 +938,88 @@ export NVM_IOJS_ORG_MIRROR=http://npm.taobao.org/mirrors/iojs
 
 ## 九、Linux  字体目录
 
+1. Linux 字体存在该目录中。如果需要新建字体应该在该目录中添加新目录`/newDir`
+
+   ```sh
+   /usr/share/fonts
+   ```
+
+2. 并且设置目录权限
+
+   ```sh
+   chmod 755 myfonts
+   ```
+
+3. 安装字体索引指令
+
+   ```sh
+   sudo yum install -y fontconfig mkfontscale
+   ```
+
+4. 建立字体索引信息更新字体缓存
+
+   ```sh
+   cd /usr/share/fonts/myfonts
+   mkfontscale && mkfontdir && fc-cache -fv
+   ```
+
+5. 查看安装情况
+
+   ```sh
+   fc-list :lang=zh
+   ```
+
+## 十、Linux  设置开机自启
+
+#### 一、在etc/rc.local中添加
+
+1、先修改好脚本，使其所有模块都能在任意目录启动时正常执行;
+
+2、再在/etc/rc.local的末尾添加一行以绝对路径启动脚本的行。
+
 ```sh
-/usr/share/fonts
+#!/bin/bash
+# THIS FILE IS ADDED FOR COMPATIBILITY PURPOSES
+#
+# It is highly advisable to create own systemd services or udev rules
+# to run scripts during boot instead of using this file.
+#
+# In contrast to previous versions due to parallel execution during boot
+# this script will NOT be run after all other services.
+#
+# Please note that you must run 'chmod +x /etc/rc.d/rc.local' to ensure
+# that this script will be executed during boot.
+
+touch /var/lock/subsys/local
 ```
 
+3、添加可执行权限：chmod +x /etc/rc.d/rc.local
+
+4、保存并退出;再重启动测试下，则在其它的程序都启动完成后，将启动脚本。
+
+#### 二、使用systemd服务
+
+代的Linux发行版通常使用systemd来管理系统进程和服务。
+
+你可以创建一个systemd服务来实现开机自启动。首先，创建一个以 `.service` 结尾的文件（例如 `myservice.service`）并将以下内容添加进去：
+
+```sh
+[Unit]
+Description=My Service
+After=network.target
+
+[Service]
+ExecStart=/path/to/your/command
+
+[Install]
+WantedBy=default.target
+```
+
+将 `/path/to/your/command` 替换为你想要自启的命令的完整路径。
+
+将该 `.service` 文件复制到 `/etc/systemd/system/` 目录下，然后运行以下命令启用服务并启动：
+
+```sh
+sudo systemctl enable myservice.service
+sudo systemctl start myservice.service
+```
