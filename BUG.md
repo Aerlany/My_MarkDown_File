@@ -40,4 +40,21 @@
 
 1.zqh 计算机组成原理
 
-2.
+2.ljq c语言
+
+
+
+#### 数据库相关改动
+
+```sql
+alter table course_target_analyse add CONSTRAINT 课程目标分析表链接课程基本信息表 FOREIGN KEY (course_id) REFERENCES course_basic_information(id) ON DELETE CASCADE ON UPDATE CASCADE;
+```
+
+```sql
+alter table course_target_analyse add target_id int(11) DEFAULT 1 AFTER course_id;
+```
+
+```sql
+alter table course_target_analyse add CONSTRAINT 课程目标分析表链接课程目标表 FOREIGN KEY (target_id) REFERENCES course_target(id) ON DELETE CASCADE ON UPDATE CASCADE;
+```
+
