@@ -58,3 +58,9 @@ alter table course_target_analyse add target_id int(11) DEFAULT 1 AFTER course_i
 alter table course_target_analyse add CONSTRAINT 课程目标分析表链接课程目标表 FOREIGN KEY (target_id) REFERENCES course_target(id) ON DELETE CASCADE ON UPDATE CASCADE;
 ```
 
+
+
+```
+
+```
+
