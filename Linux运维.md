@@ -1050,32 +1050,66 @@ firewall-cmd --state
  firewall-cmd --zone=public --list-ports
 ```
 
-更新防火墙规则： firewall-cmd --reload
+更新防火墙规则： 
 
-查看区域信息: firewall-cmd --get-active-zones
+```sh
+firewall-cmd --reload
+```
 
-查看指定接口所属区域： firewall-cmd --get-zone-of-interface=eth0
+查看区域信息: 
 
-拒绝所有包：firewall-cmd --panic-on
+```sh
+firewall-cmd --get-active-zones
+```
 
-取消拒绝状态： firewall-cmd --panic-off
+查看指定接口所属区域： 
 
-查看是否拒绝： firewall-cmd --query-panic
+```sh
+firewall-cmd --get-zone-of-interface=eth0
+```
 
-那怎么开启一个端口呢
+拒绝所有包：
+
+```sh
+firewall-cmd --panic-on
+```
+
+取消拒绝状态： 
+
+```sh
+firewall-cmd --panic-off
+```
+
+查看是否拒绝： 
+
+```sh
+firewall-cmd --query-panic
+```
+
+**那怎么开启一个端口呢**
 
 添加
 
-firewall-cmd --zone=public --add-port=80/tcp --permanent （--permanent永久生效，没有此参数重启后失效）
+```sh
+firewall-cmd --zone=public --add-port=80/tcp --permanent 
+（--permanent永久生效，没有此参数重启后失效）
+```
 
 重新载入
 
+```sh
 firewall-cmd --reload
+```
 
 查看
 
-firewall-cmd --zone= public --query-port=80/tcp
+```sh
+firewall-cmd --zone=public --query-port=80/tcp
+```
 
 删除
 
-firewall-cmd --zone= public --remove-port=80/tcp --permanent
+```sh
+firewall-cmd --zone=public --remove-port=80/tcp --permanent
+```
+
