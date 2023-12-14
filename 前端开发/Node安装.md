@@ -117,19 +117,19 @@ npm config ls
 
 To look over the installed Node vesion:
 
-```
+```sh
 nvm list
 ```
 
 To download, compile, and install the latest release of node, do this:
 
-```
+```sh
 nvm install node # "node" is an alias for the latest version
 ```
 
 To install a specific version of node:
 
-```
+```sh
 nvm install 14.7.0 # or 16.3.0, 12.22.1, etc
 ```
 
@@ -137,31 +137,31 @@ The first version installed becomes the default. New shells will start with the 
 
 You can list available versions using `ls-remote`:
 
-```
+```sh
 nvm ls-remote
 ```
 
 And then in any new shell just use the installed version:
 
-```
+```sh
 nvm use node
 ```
 
 Or you can just run it:
 
-```
+```sh
 nvm run node --version
 ```
 
 Or, you can run any arbitrary command in a subshell with the desired version of node:
 
-```
+```sh
 nvm exec 4.2 node --version
 ```
 
 You can also get the path to the executable to where it was installed:
 
-```
+```sh
 nvm which 12.22
 ```
 
