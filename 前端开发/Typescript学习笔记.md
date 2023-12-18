@@ -1,7 +1,5 @@
 # TypeScript NOTES
 
-# 一、基础定义
-
 ## 基础数据类型
 
 TypeScript支持与JavaScript几乎相同的数据类型，数字，字符串，结构体，布尔值等。此外还提供了实用的枚举类型方便我们使用。

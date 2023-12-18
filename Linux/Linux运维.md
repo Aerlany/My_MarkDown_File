@@ -4,7 +4,7 @@
 
 Systemd 是一系列工具的集合， 包括了一个专用的系统日志管理服务：Journald。这个服务的设计初衷是克服现有 Syslog 服务的日志内容易伪造和日志格式不统一等缺点，Journald 用 二进制格式 保存所有的日志信息，因而日志内容很难被手工伪造。Journald 还提供了一个 journalctl 命令来查看日志信息，这样就使得不同服务输出的日志具有相同的排版格式， 便于数据的二次处理。
 
-![img](https://ucc.alicdn.com/pic/developer-ecology/sipbixvm4ttae_291341aa0bb34e00ad3e2aa0b2b96cb1.png)
+![img](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/sipbixvm4ttae_291341aa0bb34e00ad3e2aa0b2b96cb1.png)
 
 ### 1.Systemd Unit
 
@@ -159,7 +159,7 @@ Alias：当前 Unit 可用于启动的别名
 
 SysV-init 运行级别与 Systemd Target 对应的 Unit 文件
 
-![1832b220aa754cd18c504acc7686a560.png](https://ucc.alicdn.com/pic/developer-ecology/sipbixvm4ttae_04ff0852a1fb4660beb8179cf6927faa.png)
+![1832b220aa754cd18c504acc7686a560.png](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/sipbixvm4ttae_04ff0852a1fb4660beb8179cf6927faa.png)
 
 通过 systemctl list-units --type=target 命令可以获取当前正在使用的运行目标
 
@@ -441,7 +441,7 @@ Mysql 仓库源地址: https://dev.mysql.com/downloads/repo/yum/
 
 选择 CentOS 7 版本的 mysql 源
 
-![img](https://ask.qcloudimg.com/http-save/yehe-8223537/6445c514ea6bd681d45752ed5afeb29b.png?imageView2/2/w/2560/h/7000)
+![img](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/6445c514ea6bd681d45752ed5afeb29b.png)
 
  对应的命令操作为: 安装 `wget` 工具:
 
@@ -483,7 +483,7 @@ yum repolist all | grep mysql
 
 查询结果:
 
-![img](https://ask.qcloudimg.com/http-save/yehe-8223537/8b501f8e4ccb6b6ff03ae76ab1908510.png?imageView2/2/w/2560/h/7000)
+![img](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/8b501f8e4ccb6b6ff03ae76ab1908510.png)
 
 #### 3.2 启用指定版本的 mysql
 
@@ -513,7 +513,7 @@ yum repolist enabled | grep mysql
 
 查询结果:
 
-![img](https://ask.qcloudimg.com/http-save/yehe-8223537/0c1576b962b24f830bd8fb38a8063155.png?imageView2/2/w/2560/h/7000)
+![img](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/0c1576b962b24f830bd8fb38a8063155.png)
 
  从结果中可以看出，当前启用的 mysql 版本为 5.7,没有问题
 
@@ -1113,3 +1113,362 @@ firewall-cmd --zone=public --query-port=80/tcp
 firewall-cmd --zone=public --remove-port=80/tcp --permanent
 ```
 
+# Linux命令排雷
+
+## 管道符 | 
+
+![image-20231218103123341](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20231218103123341.png)
+
+Linux提供的管道符`|`将两条命令隔开，管道符左边命令的**输出**会作为管道符**输入**
+
+##  重定向符号 
+
+| 符号    | 解释           |
+| ------- | -------------- |
+| >       | 输出覆盖重定向 |
+| >>      | 输出追加重定向 |
+| < 或 << | 标准输入重定向 |
+
+## cat
+
+查看⽂件内容
+
+```sh
+cat text.txt
+```
+
+多个⽂件合并
+
+```sh
+cat file.txt file2.txt > file3.txt
+```
+
+⾮交互式编辑或追加内容
+
+```sh
+cat >> file.txt << EOF欢迎来到路⻜学城EOF
+```
+
+清空⽂件内容
+
+```sh
+cat /dev/null > file.txt【/dev/null是linux系统的⿊洞⽂件】
+```
+
+**参数：**
+
+- ```sh
+  ⽤法：
+  cat [选项][⽂件]...
+  将[⽂件]或标准输⼊组合输出到标准输出。
+  
+  -A, --show-all 			等价于-vET
+  -b, --number-nonblank 	对⾮空输出⾏编号
+  -e 						等价于-vE
+  -E, --show-ends			在每⾏结束处显示$
+  -n, --number			对输出的所有⾏编号
+  -s, --squeeze-blank		不输出多⾏空⾏
+  -t						与-vT等价
+  -T, --show-tabs			将跳格字符显示为^I
+  -v, --show-nonprinting	使⽤^和M-引⽤，除了LFD和TAB之外
+  --help					显示此帮助信息并退出
+  --version				输出版本信息并退出
+  
+  如果[⽂件]缺省，或者[⽂件]为-，则读取标准输⼊。
+  ```
+
+## tac
+
+与cat命令作⽤相反，反向读取⽂件内容
+
+```sh
+➜  Temp cat text.txt 
+我是0
+我是1
+➜  Temp tac text.txt 
+我是1
+我是0
+➜  Temp 
+```
+
+## more & less
+
+分屏查看大文本数据
+
+```sh
+more 操作： 
+enter 下一行
+空格 下一页
+```
+
+```sh
+less 操作参照vim
+```
+
+## head & tail
+
+head 用于查看文件开头的n行
+
+```sh
+head -5 查看文件开头的5行（默认为10行）
+
+参数：
+-c		查看字符数 
+```
+
+less 用于查看文件结尾的n行
+
+```sh
+tail -5 查看文件结尾的5行（默认为10行）
+
+参数：
+-f 		实时查看已有文件末尾信息
+-F   	实时查看文件()可以未创建末尾信息  
+```
+
+## cut
+
+cut命令在每个文件的各行中用于逐行文本分割，将分割片段作为标准输出
+
+**参数**：
+
+- ```sh
+  -c			以字符为单位分割
+  -b			以字节为单位分割
+  -n			取消分割多字节字符，与-b一起使用
+  -d			自定义分割符
+  -f			与-d一起使用，指定到那个区域
+  
+  指定范围：
+         N      第 N 个 字节, 字符 或 字段, 从 1 计数 起
+         N-     从 第 N 个 字节, 字符 或 字段 直至 行尾
+         N-M    从 第 N 到 第 M (并包括 第M) 个 字节, 字符 或 字段
+         -M     从 第 1 到 第 M (并包括 第M) 个 字节, 字符 或 字段
+  
+  ```
+
+**案例：**
+
+```sh
+# 截取指定字符范围的文本
+cut -c 3- passwd
+
+# 自定义分割符号进行截取，并限定范围
+cut -d ":" -f1-10 passwd
+```
+
+## sort
+
+sort命令将文件按照规则进行排序，将结果作为标准输出
+
+```sh
+sort [选项] [文件]
+```
+
+**参数**：
+
+- ```sh
+  -b     	忽略排序字段或关键字中开头的空格
+  -c     	检查是否指定文件已经排序好了,不排序.
+  -d     	在关键字中只考虑[a-zA-Z0-9]字符.
+  -f     	将关键字中的小写字母折合成大写字母.
+  -g     	按照通常的数字值顺序作比较,暗含-b
+  -i     	在关键字中只考虑[\040-\0176]字符.
+  -k POS1[,POS2]			指定排序范围
+  
+  -l     	按照当前环境排序.
+  -u		排序结果去重
+  -n		根据字符串数值比较
+  -t		指定分割符号
+  
+  -m     合并已经排序好的文件,不排序.
+  
+  ```
+
+**案例**：
+
+```sh
+# 指定分割符划分范围进行排序
+sort -n -t':' -k 3 passwd
+```
+
+## uniq
+
+uniq命令将文件逐行去重，将结果作为标准输出
+
+```sh
+uniq [选项] [文件]
+```
+
+**参数：**
+
+- ```sh
+  -c		显示每行出现的次数
+  -d		只输出重复的行
+  -u		只显示出现过一次的行
+  ```
+
+  
+
+
+
+
+
+## xargs 
+
+xargs（英文全拼： **eXtended ARGuments**）是给命令传递参数的一个过滤器，也是组合多个命令的一个工具。
+
+xargs 可以将管道或标准输入（stdin）数据转换成命令行参数，也能够从文件的输出中读取数据。
+
+xargs 也可以将单行或多行文本输入转换为其他格式，例如多行变单行，单行变多行。
+
+xargs 默认的命令是 echo，这意味着通过管道传递给 xargs 的输入将会包含换行和空白，不过通过 xargs 的处理，换行和空白将被空格取代。
+
+xargs 是一个强有力的命令，它能够捕获一个命令的输出，然后传递给另外一个命令。
+
+之所以能用到这个命令，关键是由于很多命令不支持|管道来传递参数，而日常工作中有有这个必要，所以就有了 xargs 命令，例如：
+
+```sh
+somecommand |xargs -item  command
+```
+
+**参数：**
+
+- ```sh
+  -a file 从文件中读入作为 stdin
+  -e flag ，注意有的时候可能会是-E，flag必须是一个以空格分隔的标志，当xargs分析到含有flag这个标志的时候就停止。
+  -p 当每次执行一个argument的时候询问一次用户。
+  -n num 后面加次数，表示命令在执行的时候一次用的argument的个数，默认是用所有的。
+  -t 表示先打印命令，然后再执行。
+  -i 或者是-I，这得看linux支持了，将xargs的每项名称，一般是一行一行赋值给 {}，可以用 {} 代替。
+  -r no-run-if-empty 当xargs的输入为空的时候则停止xargs，不用再去执行了。
+  -s num 命令行的最大字符数，指的是 xargs 后面那个命令的最大命令行字符数。
+  -L num 从标准输入一次读取 num 行送给 command 命令。
+  -l 同 -L。
+  -d delim 分隔符，默认的xargs分隔符是回车，argument的分隔符是空格，这里修改的是xargs的分隔符。
+  -x exit的意思，主要是配合-s使用。。
+  -P 修改最大的进程数，默认是1，为0时候为as many as it can ，这个例子我没有想到，应该平时都用不到的吧。
+  ```
+
+  ### 实例
+
+  xargs 用作替换工具，读取输入数据重新格式化后输出。
+
+  定义一个测试文件，内有多行文本数据：
+
+  ```sh
+  # cat test.txt
+  
+  a b c d e f g
+  h i j k l m n
+  o p q
+  r s t
+  u v w x y z
+  ```
+
+  多行输入单行输出：
+
+  ```sh
+  # cat test.txt | xargs
+  a b c d e f g h i j k l m n o p q r s t u v w x y z
+  ```
+
+  -n 选项多行输出：
+
+  ```sh
+  # cat test.txt | xargs -n3
+  
+  a b c
+  d e f
+  g h i
+  j k l
+  m n o
+  p q r
+  s t u
+  v w x
+  y z
+  ```
+
+  -d 选项可以自定义一个定界符：
+
+  ```sh
+  # echo "nameXnameXnameXname" | xargs -dX
+  
+  name name name name
+  ```
+
+  结合 -n 选项使用：
+
+  ```sh
+  # echo "nameXnameXnameXname" | xargs -dX -n2
+  
+  name name
+  name name
+  ```
+
+  读取 stdin，将格式化后的参数传递给命令
+
+  假设一个命令为 sk.sh 和一个保存参数的文件 arg.txt：
+
+  ```sh
+  #!/bin/bash
+  #sk.sh命令内容，打印出所有参数。
+  
+  echo $*
+  ```
+
+  arg.txt文件内容：
+
+  ```sh
+  # cat arg.txt
+  
+  aaa
+  bbb
+  ccc
+  ```
+
+  xargs 的一个选项 -I，使用 -I 指定一个替换字符串 {}，这个字符串在 xargs 扩展时会被替换掉，当 -I 与 xargs 结合使用，每一个参数命令都会被执行一次：
+
+  ```sh
+  # cat arg.txt | xargs -I {} ./sk.sh -p {} -l
+  
+  -p aaa -l
+  -p bbb -l
+  -p ccc -l
+  ```
+
+  复制所有图片文件到 /data/images 目录下：
+
+  ```sh
+  ls *.jpg | xargs -n1 -I {} cp {} /data/images
+  ```
+
+  xargs 结合 find 使用
+
+  用 rm 删除太多的文件时候，可能得到一个错误信息：**/bin/rm Argument list too long.** 用 xargs 去避免这个问题：
+
+  ```sh
+  find . -type f -name "*.log" -print0 | xargs -0 rm -f
+  ```
+
+  xargs -0 将 \0 作为定界符。
+
+  统计一个源代码目录中所有 php 文件的行数：
+
+  ```sh
+  find . -type f -name "*.php" -print0 | xargs -0 wc -l
+  ```
+
+  查找所有的 jpg 文件，并且压缩它们：
+
+  ```sh
+  find . -type f -name "*.jpg" -print | xargs tar -czvf images.tar.gz
+  ```
+
+  xargs 其他应用
+
+  假如你有一个文件包含了很多你希望下载的 URL，你能够使用 xargs下载所有链接：
+
+  ```sh
+  # cat url-list.txt | xargs wget -c
+  ```
