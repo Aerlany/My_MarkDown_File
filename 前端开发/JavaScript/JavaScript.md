@@ -1447,6 +1447,20 @@ while (true) {
 
 声明（定义）一个完整函数包括关键字、函数名、形式参数、函数体、返回值5个部分
 
+```js
+//通常定义
+function functionA () {
+    console.log("Hello A");
+}
+
+//函数表达式
+const functionB = function () {
+    console.log("Hello B");
+};
+```
+
+
+
 #### 调用
 
 声明（定义）的函数必须调用才会真正被执行，使用 `()` 调用函数。
@@ -1665,12 +1679,41 @@ let fn = function() {
 fn()
 ~~~
 
-#### 立即执行函数
+#### 立即执行函数（函数自调用）
 
 ~~~javascript
 (function(){ xxx  })();
 (function(){xxxx}());
 ~~~
+
+```js
+const functionA = function () {
+    var x = "Hello A";
+    console.log(x);
+    return 3;
+}
+
+console.log(functionA);
+
+const functionB = function () {
+    var x = "Hello B";
+    console.log(x);
+    return 3;
+}();
+
+console.log(functionB);
+
+(function functionC() {
+    var x = "Hello C";
+    console.log(x);
+    return 3;
+})();
+
+// ReferenceError: functionC is not defined
+//console.log(functionC);
+```
+
+
 
 >无需调用，立即执行，其实本质已经调用了
 >
@@ -5129,7 +5172,7 @@ filter() 方法创建一个新的数组，新数组中的元素是通过检查�
 2. 一般公共特征的属性或方法静态成员设置为静态成员
 3. 静态成员方法中的 `this` 指向构造函数本身
 
-## 内置构造函数
+## 标准内置对象
 
 > 掌握各引用类型和包装类型对象属性和方法的使用。
 
@@ -6082,53 +6125,723 @@ filter() 方法创建一个新的数组，新数组中的元素是通过检查�
 
 
 
+# JavaScript ES6
+
+## let关键字
+
+let 关键字用来声明变量，使用 let 声明的变量有几个特点：
+
+1) 不允许重复声明
+2) 块儿级作用域
+3) 不存在变量提升
+4) 不影响作用域链
+
+**应用场景：以后声明变量使用** **let** **就对了**
+
+
+
+## **const** **关键字**
+
+const 关键字用来声明常量，const 声明有以下特点
+
+1) 声明必须赋初始值
+2) 标识符一般为大写
+3) 不允许重复声明
+4) 值不允许修改
+5) 块儿级作用域
+
+**注意**: **对象属性修改和数组元素变化不会出发** **const** **错误**
+
+**应用场景：声明对象类型使用** **const**，非对象类型声明选择**let**
+
+
+
+## **变量的解构赋值**
+
+ES6 允许按照一定模式，从数组和对象中提取值，对变量进行赋值，这被称为解构赋值。
+
+```js
+//数组解构
+const arr = ['张学友', '刘德华', '黎明', '郭富城'];
+let [zhang, liu, li, guo] = arr;
+
+//对象解构
+const lin = {
+ 	name: '林志颖',
+ 	tags: ['车手', '歌手', '小旋风', '演员']
+};
+let {name, tags} = lin;
+
+//复杂解构
+let wangfei = {
+ 	name: '王菲',
+ 	age: 18,
+ 	songs: ['红豆', '流年', '暧昧', '传奇'],
+ 	history: [
+ 		{name: '窦唯'},
+ 		{name: '李亚鹏'},
+ 		{name: '谢霆锋'}
+ 	]
+};
+let {songs: [one, two, three], history: [first, second, third]} = 
+wangfei;
+```
+
+**注意：频繁使用对象方法、数组元素，就可以使用解构赋值形式**
+
+
+
+## **模板字符串**
+
+模板字符串（`template string`）是增强版的字符串，用反引号（`）标识，特点：
+
+1) 字符串中可以出现换行符
+2) 可以使用 ${xxx} 形式输出变量
+
+```js
+//定义字符串
+let str = 
+`<ul>
+ <li>沈腾</li>
+ <li>玛丽</li>
+ <li>魏翔</li>
+ <li>艾伦</li>
+ </ul>`;
+
+// 变量拼接
+let star = '王宁';
+let result = `${star}在前几年离开了开心麻花`;
+```
+
+
+
+## **简化对象写法**
+
+ES6 允许在大括号里面，直接写入变量和函数，作为对象的属性和方法。这样的书写更加简洁。
+
+```js
+let name = "Tom";
+let age = "18";
+function say() {
+    console.log(`${this.name}刚满${this.age}岁`);
+}
+const person = {
+    name,
+    age,
+    say
+}
+person.say();
+```
+
+## **箭头函数**
+
+箭头函数的注意点:
+
+1) 如果形参只有一个，则小括号可以省略
+2) 函数体如果只有一条语句，则花括号可以省略，函数的返回值为该条语句的执行结果
+
+3) 箭头函数 this 指向声明时所在作用域下 this 的值
+4) 箭头函数不能作为构造函数实例化
+5) 不能使用 arguments
+
+```js
+function say() {
+    console.log(arguments);
+}
+
+//通用写法
+let fun1 = (arg1, arg2, arg3) => {
+    console.log(arg1, arg2, arg3);
+    //argument 不能使用
+    // console.log(arguments);
+}
+
+//形参只一个可以省略小括号
+let fun2 = arg1 => {
+    console.log(arg1);
+}
+
+//函数语句只有一个可以省略花括号
+let fun3 = arg1 => console.log(arg1);
+
+//this指向作用域中的this
+let fun4 = () => {
+    console.log(this);
+}
+```
+
+**注意：箭头函数不会更改** **this** **指向，用来指定回调函数会非常合适**
+
+
+
+## **rest** **参数**
+
+ES6 引入 rest 参数，用于获取函数的实参，用来代替 arguments	
+
+```js
+
+function say(...agr1) {
+    console.log(agr1);
+}
+
+//rest必须是最后一个形参
+let fun1 = (arg1, ...arg3) => {
+    console.log(arg1, ...arg3);
+}
+
+say("Tom", "And", "Jery")
+fun1("Tom", "And", "Jery")
+```
+
+**注意：`rest` 参数非常适合不定个数参数函数的场景**
+
+
+
+## **spread** **扩展运算符**
+
+扩展运算符（spread）也是三个点`...`。它好比 rest 参数的逆运算，将一个数组转为用逗号分隔的参数序列，对数组进行解包。
+
+```js
+//展开数组
+let tfboys = ['德玛西亚之力', '德玛西亚之翼', '德玛西亚皇子'];
+function fn() {
+    console.log(arguments);
+}
+fn(...tfboys)
+
+//展开对象
+let person = {
+    1: "Tom",
+    2: "Jery",
+    3: "Titan"
+}
+let a = { ...person }
+console.log(a);
+```
+
+
+
+## **Symbol** **基本使用**
+
+ES6 引入了一种新的原始数据类型 Symbol，表示独一无二的值。它是
+
+JavaScript 语言的第七种数据类型，是一种类似于字符串的数据类型。
+
+Symbol 特点
+
+1) Symbol 的值是唯一的，用来解决命名冲突的问题
+2) Symbol 值不能与其他数据进行运算
+3) Symbol 定义 的 对象属 性 不能 使 用 for…in 循 环遍 历 ，但 是可 以 使 用
+
+`Reflect.ownKeys` 来获取对象的所有键名
+
+```js
+//创建 Symbol
+let s1 = Symbol();
+console.log(s1, typeof s1);
+
+//添加标识的 Symbol
+let s2 = Symbol('尚硅谷');
+let s2_2 = Symbol('尚硅谷');
+console.log(s2 === s2_2);
+
+//使用 Symbol for 定义
+let s3 = Symbol.for('尚硅谷');
+let s3_2 = Symbol.for('尚硅谷');
+console.log(s3 === s3_2);
+```
+
+除了定义自己使用的 **Symbol** 值以外，ES6 还提供了 11 个内置的 Symbol 值，指向语言内部使用的方法。可以称这些方法为魔术方法，因为它们会在特定的场景下自动执行。
+
+| 方法                        | 描述                                                         |
+| --------------------------- | ------------------------------------------------------------ |
+| `Symbol.hasInstance `       | 当其他对象使用` instanceof `运算符，判断是否为该对象的实例时，会调用这个方法 |
+| `Symbol.isConcatSpreadable` | 对象的 `Symbol.isConcatSpreadable` 属性等于的是一个布尔值，表示该对象用于 `Array.prototype.concat()`时， |
+| `Symbol.species `           | 创建衍生对象时，会使用该属性                                 |
+| `Symbol.match`              | 当执行 `str.match(myObject)` 时，如果该属性存在，会          |
+| `Symbol.replace `           | 当该对象被 `str.replace(myObject)`方法调用时，会返回该方法的返回值。 |
+| `Symbol.search`             | 当该对象被 `str.search (myObject)`方法调用时，会返回该方法的返回值。 |
+| `Symbol.split `             | 当该对象被 `str.split(myObject)`方法调用时，会返回该方法的返回值。 |
+| `Symbol.iterator `          | 对象进行 for...of 循环时，会调用` Symbol.iterator `方法，返回该对象的默认遍历器 |
+| `Symbol.toPrimitive`        | 该对象被转为原始类型的值时，会调用这个方法，返回该对象对应的原始类型值。 |
+| `Symbol. toStringTag`       | 在该对象上面调用 `toString` 方法时，返回该方法的返回值       |
+| `Symbol. unscopables`       | 该对象指定了使用 with 关键字时，哪些属性会被 with环境排除。  |
+
+
+
+## **迭代器**
+
+遍历器（Iterator）就是一种机制。它是一种接口，为各种不同的数据结构提
+
+供统一的访问机制。任何数据结构只要部署 Iterator 接口，就可以完成遍历操作
+
+1) ES6 创造了一种新的遍历命令 for...of 循环，Iterator 接口主要供 for...of 消费
+
+2) 原生具备 iterator 接口的数据(可用 for of 遍历)
+
+   > Array
+   >
+   > Arguments
+   >
+   > Set
+   >
+   > Map
+   >
+   > String
+   >
+   > TypedArray
+   >
+   > NodeList
+
+3) 工作原理
+
+	> 创建一个指针对象，指向当前数据结构的起始位置
+
+	> 第一次调用对象的 next 方法，指针自动指向数据结构的第一个成员
+
+	> 接下来不断调用 next 方法，指针一直往后移动，直到指向最后一个成员
+
+	> 每调用 next 方法返回一个包含 value 和 done 属性的对象
+
+
+
+## **生成器**
+
+生成器函数是 ES6 提供的一种异步编程解决方案，语法行为与传统函数完全不同
+
+```js
+function* gen() {
+    yield '一只没有耳朵';
+    yield '一只没有尾巴';
+    return '真奇怪';
+}
+let iterator = gen();
+console.log(iterator.next());
+console.log(iterator.next());
+console.log(iterator.next());
+```
+
+代码说明：
+
+1) `*` 的位置没有限制
+2) 生成器函数返回的结果是迭代器对象，调用迭代器对象的 next 方法可以得到yield 语句后的值
+
+3) yield 相当于函数的暂停标记，也可以认为是函数的分隔符，每调用一次 next方法，执行一段代码
+
+4) next 方法可以传递实参，作为 yield 语句的返回值
+
+
+
+## **Promise**
+
+Promise 是 ES6 引入的异步编程的新解决方案。语法上 Promise 是一个构造函数，用来封装异步操作并可以获取其成功或失败的结果。
+
+![流程图展示了 Promise 状态在 pending、fulfilled 和 rejected 之间如何通过 then() 和 catch() 处理程序进行转换。一个待定的 Promise 可以变成已兑现或已拒绝的状态。如果 Promise 已经兑现，则会执行“on fulfillment”处理程序（即 then() 方法的第一个参数），并继续执行进一步的异步操作。如果 Promise 被拒绝，则会执行错误处理程序，可以将其作为 then() 方法的第二个参数或 catch() 方法的唯一参数来传递。](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/promises.png)
+
+**使用方法**
+
+> **`Promise.prototype.then()`**
+>
+> [`Promise`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)实例的**`then()`**方法用于注册一个在promise接受时调用的函数。它会立即返回一个对应的[`Promise`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)对象，这可以让你[用链式](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Using_promises#链式调用)调用其他promise的方法。
+>
+> **`Promise.prototype.catch()`**
+>
+> [`Promise`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)实例的**`catch()`**方法用于注册一个在promise被拒绝时调用的函数。它会立即返回一个对应的[`Promise`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)对象，这可以让你[用链式](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Using_promises#链式调用)调用其他promise的方法。这个方法是[`Promise.prototype.then(undefined, onRejected)`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/then)一种简写形式。
+>
+> **`Promise.race()`** 
+>
+> 静态方法接受一个 promise 可迭代对象作为输入，并返回一个 [`Promise`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)。这个返回的 promise 会随着第一个 promise 的敲定而敲定。
+>
+> **`Promise.reject()`**
+>
+> 静态方法返回一个拒绝已（rejected）的`Promise`对象，拒绝原因为给定的参数。
+>
+> **`Promise.resolve()`**
+>
+> 静态方法将给定的值转换为一个[`Promise`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)。如果该值本身就是一个 Promise，那么该 Promise 将被返回；如果该值是一个[thenable](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise#thenable)对象，`Promise.resolve()`将调用其`then()`方法的两个回调函数；否则，返回其 Promise将会以该值兑现。
+
+```js
+//创建实例
+const myFirstPromise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        //调用方法
+        resolve("成功！")
+    }, 100);
+});
+
+myFirstPromise.then((...arg) => {
+    //接受调用
+    console.log(...arg);
+})
+```
+
+## Set（集合）
+
+**`Set`** 对象允许你存储任何类型（无论是[原始值](https://developer.mozilla.org/zh-CN/docs/Glossary/Primitive)还是对象引用）的唯一值，类似于数组。
+
+`Set` 对象是值的合集（collection）。集合（set）中的元素**只会出现一次**，即集合中的元素是唯一的。你可以按照插入顺序迭代集合中的元素。
+
+```js
+let setProtoType = new Set();
+```
+
+**实例方法**
+
+> [`Set.prototype.add()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Set/add)
+>
+> 如果 `Set` 中尚不存在具有相同值的元素，则在 `Set` 对象中插入一个新的具有指定值的元素。
+>
+> [`Set.prototype.clear()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Set/clear)
+>
+> 从 `Set` 对象中移除所有元素。
+>
+> [`Set.prototype.delete()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Set/delete)
+>
+> 移除与 `value` 关联的元素，并返回一个布尔值来表示是否移除成功。`Set.prototype.has(value)` 会在此之后返回 `false`。
+>
+> [`Set.prototype.entries()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Set/entries)
+>
+> 返回一个新的迭代器对象，该对象包含 `Set` 对象中的代表每个元素的 **`[value, value]` 数组**。这与 [`Map`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map) 对象类似，因此 `Set` 的每个条目的 *key* 和 *value* 都相同。
+>
+> [`Set.prototype.forEach()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Set/forEach)
+>
+> 按照值插入的顺序为 `Set` 对象中的每个值调用一次 `callbackFn`。如果提供了 `thisArg` 参数，它将被用作每次调用 `callbackFn` 时的 `this` 值。
+>
+> [`Set.prototype.has()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Set/has)
+>
+> 返回一个布尔值，表示给定值在 `Set` 对象中是否存在。
+>
+> [`Set.prototype.keys()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Set/keys)
+>
+> `Set.prototype.values()` 的别名。
+>
+> [`Set.prototype.values()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Set/values)
+>
+> 返回一个新的迭代器对象，该对象按插入顺序生成 `Set` 对象中每个元素的**值**。
 
 
 
 
 
+## **Map**
+
+**`Map`** 对象保存键值对，并且能够记住键的原始插入顺序。任何值（对象或者[原始值](https://developer.mozilla.org/zh-CN/docs/Glossary/Primitive)）都可以作为键或值。
+
+`Map` 对象是键值对的集合。`Map` 中的一个键**只能出现一次**；它在 `Map` 的集合中是独一无二的。
+
+`Map` 对象按键值对迭代——一个 [`for...of`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/for...of) 循环在每次迭代后会返回一个形式为 `[key, value]` 的数组。迭代按*插入顺序*进行，即键值对按 [`set()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map/set) 方法首次插入到集合中的顺序（也就是说，当调用 `set()` 时，map 中没有具有相同值的键）进行迭代。
+
+```js
+let mapProtoType = new Map();
+```
+
+**实例方法**
+
+> [`Map.prototype.clear()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map/clear)
+>
+> 移除 `Map` 对象中所有的键值对。
+>
+> [`Map.prototype.delete()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map/delete)
+>
+> 移除 `Map` 对象中指定的键值对，如果键值对存在并成功被移除，返回 `true`，否则返回 `false`。调用 `delete` 后再调用 `map.has(key)` 将返回 `false`。
+>
+> [`Map.prototype.entries()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map/entries)
+>
+> 返回一个新的迭代器对象，其包含 `Map` 对象中所有键值对 `[key, value]` 二元数组，以插入顺序排列。
+>
+> [`Map.prototype.forEach()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map/forEach)
+>
+> 以插入顺序为 `Map` 对象中的每个键值对调用一次 `callbackFn`。如果为 `forEach` 提供了 `thisArg` 参数，则它将作为每一次 callback 的 `this` 值。
+>
+> [`Map.prototype.get()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map/get)
+>
+> 返回与指定的键 `key` 关联的值，若不存在关联的值，则返回 `undefined`。
+>
+> [`Map.prototype.has()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map/has)
+>
+> 返回一个布尔值，用来表明 `Map` 对象中是否存在与指定的键 `key` 关联的值。
+>
+> [`Map.prototype.keys()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map/keys)
+>
+> 返回一个新的迭代器对象，其包含 `Map` 对象中所有元素的键，以插入顺序排列。
+>
+> [`Map.prototype.set()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map/set)
+>
+> 在 `Map` 对象中设置与指定的键 `key` 关联的值，并返回 `Map` 对象。
+>
+> [`Map.prototype.values()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map/values)
+>
+> 返回一个新的迭代对象，其中包含 `Map` 对象中所有的值，并以插入 `Map` 对象的顺序排列。
 
 
 
+## **class** **类**
+
+在面向对象编程中（[object-oriented programming](https://developer.mozilla.org/zh-CN/docs/Glossary/OOP)）, 一个 *类* 定义了一个对象（[object's](https://developer.mozilla.org/zh-CN/docs/Glossary/Object)）的特征。类是定义对象属性（[properties](https://developer.mozilla.org/zh-CN/docs/Glossary/Property)）和方法（[methods](https://developer.mozilla.org/zh-CN/docs/Glossary/Method)）的模板，是用来绘制具体对象实例的“蓝图”。
+
+1) class 声明类
+2) constructor 定义构造函数初始化
+3) extends 继承父类
+4) super 调用父级构造方法
+5) static 定义静态方法和属性
+6) 父类方法可以重写
+
+```js
+class father {
+    constructor(...arg) {
+        this.data = [...arg];
+    }
+    say() {
+        this.data.forEach((item) => {
+            console.log(item);
+        })
+    }
+}
+
+class child extends father {
+    constructor(name, ...arg) {
+        super(...name);
+        this.name = name;
+    }
+    say() {
+        console.log(`${this.name}`);
+        super.say();
+    }
+}
+
+let fa = new father("TOM", "AND", "JERY");
+let child1 = new child("TOM", "FACK YOU!")
+
+console.log(fa.data);
+child1.say();
+```
 
 
 
+## Number
+
+`Number` 构造函数包含常量和处理数值的方法。其他类型的值可以使用 `Number()` 函数转换为数字。
+
+**静态方法**
+
+> [`Number.isFinite()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number/isFinite)
+>
+> 判断传入的值是否是有限数。
+>
+> [`Number.isInteger()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number/isInteger)
+>
+> 判断传入的值是否为整数
+>
+> [`Number.isNaN()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number/isNaN)
+>
+> 判断传入的值是否为 `NaN`。
+>
+> [`Number.isSafeInteger()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger)
+>
+> 判断传入的值是否为安全整数（数值在 -(253 - 1) 到 253 - 1 之间）。
+>
+> [`Number.parseFloat()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number/parseFloat)
+>
+> 和全局函数 [`parseFloat()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/parseFloat) 相同。
+>
+> [`Number.parseInt()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number/parseInt)
+>
+> 和全局函数 [`parseInt()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/parseInt) 相同。
 
 
 
+**实例方法**
+
+> [`Number.prototype.toExponential()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number/toExponential)
+>
+> 返回使用指数表示法表示数值的字符串。
+>
+> [`Number.prototype.toFixed()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number/toFixed)
+>
+> 返回使用定点表示法表示数值的字符串。
+>
+> [`Number.prototype.toLocaleString()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString)
+>
+> 返回数值在特定语言环境下表示的字符串。重写了 [`Object.prototype.toLocaleString()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/toLocaleString) 方法。
+>
+> [`Number.prototype.toPrecision()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number/toPrecision)
+>
+> 返回数值使用定点表示法或指数表示法至指定精度的字符串。
+>
+> [`Number.prototype.toString()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number/toString)
+>
+> 返回一个代表给定对象的字符串，基于指定的*基数*（radix）。重写了 [`Object.prototype.toString()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/toString) 方法。
+>
+> [`Number.prototype.valueOf()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number/valueOf)
+>
+> 返回指定对象的原始值。重写了 [`Object.prototype.valueOf()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf) 方法。
 
 
 
+## export and import
+
+在创建 JavaScript 模块时，**`export`** 语句用于从模块中导出实时绑定的函数、对象或原始值，以便其他程序可以通过 [`import`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/import) 语句使用它们。被导出的绑定值依然可以在本地进行修改。在使用 import 进行导入时，这些绑定值只能被导入模块所读取，但在 export 导出模块中对这些绑定值进行修改，所修改的值也会实时地更新。
+
+**用法**
+
+存在两种 exports 导出方式：
+
+1. 命名导出（每个模块包含任意数量）
+2. 默认导出（每个模块包含一个）
+
+```js
+// 导出单个特性
+export let name1, name2, …, nameN; // also var, const
+export let name1 = …, name2 = …, …, nameN; // also var, const
+export function FunctionName(){...}
+export class ClassName {...}
+
+// 导出列表
+export { name1, name2, …, nameN };
+
+// 重命名导出
+export { variable1 as name1, variable2 as name2, …, nameN };
+
+// 解构导出并重命名
+export const { name1, name2: bar } = o;
+
+// 默认导出
+export default expression;
+export default function (…) { … } // also class, function*
+export default function name1(…) { … } // also class, function*
+export { name1 as default, … };
+
+// 导出模块合集
+export * from …; // does not set the default export
+export * as name1 from …; // Draft ECMAScript® 2O21
+export { name1, name2, …, nameN } from …;
+export { import1 as name1, import2 as name2, …, nameN } from …;
+export { default } from …;
+
+```
+
+**注意**
+
+有两种不同的导出方式，命名导出和默认导出。你能够在每一个模块中定义多个命名导出，但是只允许有一个默认导出。每种方式对应于上述的一种语法：
+
+**使用默认导出**
+
+```js
+// 导出事先定义的特性作为默认值
+export { myFunction as default };
+
+// 导出单个特性作为默认值
+export default function () { ... }
+export default class { .. }
+
+// 每个导出都覆盖前一个导出
+```
+
+如果我们要导出一个值或得到模块中的返回值，就可以使用默认导出：
+
+```js
+export default function cube(x) {
+  return x * x * x;
+}
+```
+
+然后，在另一个脚本中，可以直接导入默认导出：
+
+```js
+import cube from "./my-module.js";
+console.log(cube(3)); // 27
+```
+
+**使用命名导出**
+
+```js
+// module "my-module.js"
+function cube(x) {
+  return x * x * x;
+}
+
+const foo = Math.PI + Math.SQRT2;
+
+var graph = {
+  options: {
+    color: "white",
+    thickness: "2px",
+  },
+  draw: function () {
+    console.log("From graph draw function");
+  },
+};
+
+export { cube, foo, graph };
+```
+
+```js
+import { cube, foo, graph } from "my-module.js";
+
+graph.options = {
+  color: "blue",
+  thickness: "3px",
+};
+
+graph.draw();
+console.log(cube(3)); // 27
+console.log(foo); // 4.555806215962888
+```
 
 
 
+## **async and await** 
+
+async 函数是使用`async`关键字声明的函数。async 函数是 [`AsyncFunction`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/AsyncFunction) 构造函数的实例，并且其中允许使用 `await` 关键字。`async` 和 `await` 关键字让我们可以用一种更简洁的方式写出基于 [`Promise`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise) 的异步行为，而无需刻意地链式调用 `promise`。
+
+```js
+function resolveAfter2Seconds() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve('resolved');
+    }, 2000);
+  });
+}
+
+async function asyncCall() {
+  console.log('calling');
+  const result = await resolveAfter2Seconds();
+  console.log(result);
+  // Expected output: "resolved"
+}
+
+asyncCall();
+```
+
+**返回值**
+
+一个 [`Promise`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)，这个 promise 要么会通过一个由 async 函数返回的值被解决，要么会通过一个从 async 函数中抛出的（或其中没有被捕获到的）异常被拒绝。
+
+**描述**
+
+async 函数可能包含 0 个或者多个 [`await`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/await) 表达式。await 表达式会暂停整个 async 函数的执行进程并出让其控制权，只有当其等待的基于 promise 的异步操作被兑现或被拒绝之后才会恢复进程。promise 的解决值会被当作该 await 表达式的返回值。使用 `async`/`await` 关键字就可以在异步代码中使用普通的 `try`/`catch` 代码块。
 
 
 
+**Object.fromEntries**
+
+**trimStart** **和** **trimEnd**
+
+**Array.prototype.flat** **与** **flatMap**
+
+**Symbol.prototype.description**
 
 
 
+**String.prototype.matchAll**
 
+**类的私有属性**
 
+**Promise.allSettled**
 
+**可选链操作符**
 
+**动态** **import** **导入**
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+**globalThis** **对象**
 
