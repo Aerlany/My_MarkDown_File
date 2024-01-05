@@ -98,7 +98,7 @@
 
 **Motherboard Chipsets** (主板芯片组)
 
-![image-20221114213713317](/home/user/.config/Typora/typora-user-images/image-20221114213713317.png)
+![image-20221114213713317](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221114213713317.png)
 
 ------
 
