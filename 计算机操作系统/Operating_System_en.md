@@ -9,11 +9,13 @@
 **What’s an Operating System?**
 
 1. It's the program that runs all the time.
-2. It's a **resource manager** (Each program gets time or space with/ on the resource).
-3. It's a **control program** (Control execution of  program to prevent error and improper use of the computer).
+2. It's a **resource manager** 
+
+   *Each program gets time or space with/ on the resource*
+3. It's a **control program**
+
+   *Control execution of  program to prevent error and improper use of the computer*
 4. No universally accepted definition.
-
-
 
 ------
 
@@ -26,77 +28,125 @@
 
 
 
+**NOTE**
+
+**操作系统**（英语：**O**perating **S**ystem，缩写：**OS**）是指控制和管理整个计算机系统的硬件（Memory）和软件资源（Process），并合理地组织调度计算机的工作（Job Scheduling）和资源（CPU）的分配的[系统软件](https://zh.wikipedia.org/wiki/系统软件)[程序](https://zh.wikipedia.org/wiki/程序)，以提供给用户和其他软件方便的接口和环境。
+
+
+
 ## OS Services
 
 **Helping the users:**
 
-1. User interface (用户界面)
-2. File system manipulation (文件系统操作)
-3. Program execution (程序运行)
-4. Communication (交流)
-5. I/O operation
-6. Error detection (错误检测)
-
-
-
-------
+| 功能                     | 描述         |
+| ------------------------ | ------------ |
+| User interface           | 用户界面     |
+| File system manipulation | 文件系统操作 |
+| Program execution        | 程序运行     |
+| Communication            | 交流         |
+| I/O operation            | I/O控制      |
+| Error detection          | 错误检测     |
 
 **Keeping the system efficient:**
 
-1. Resource allocation (资源分配)
-2. Accounting (账户分户)
-3. Protection and security (保护和安全)
+| 功能                    | 描述       |
+| ----------------------- | ---------- |
+| Resource allocation     | 资源分配   |
+| Accounting              | 账户分户   |
+| Protection and security | 保护和安全 |
 
 
 
-
+-----
 
 ## Hardware
 
-------
+### **CPU Working Cycle** 
 
-**CPU Working Cycle** (CPU工作周期)
+**(CPU工作流程)**
 
-1. **Fetch** the first instruction from memory
-2. **Decode** it to determine its type and operands (解码来决定其类型和操作码)
+![image-20240108102140128](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20240108102140128.png)
+
+1. **Fetch** the first instruction from memory 	***从内存中取出操作码***
+2. **Decode** it to determine its type and operands  ***解码来决定其类型和操作码***
 3. **Execute** it
 
 
 
-------
-
 **Special CPU Registers** (寄存器)
 
-1. **Program counter (PC)**: keeps the memory address of the next instruction to be fetched
-2. **Stack pointer (SP)**: point to the top of the current stack in memory
-3. **Program status (PS)**: holds condition code bits and processor state (存储条件代码位和处理器状态)
+1. **Program counter (PC) *程序计数器***: 
+
+   ​	keeps the memory address of the next instruction to be fetched
+
+   ​	*保存下一条要取的指令的内存地址*
+
+2. **Stack pointer (SP) *堆栈指针***: 
+
+   ​	point to the top of the current stack in memory
+
+   ​	*指向内存中当前堆栈的顶部*
+
+3. **Program status (PS)**: 
+
+   ​	holds condition code bits and processor state 
+
+   ​	*存储条件代码位和处理器状态*
 
 
 
 ------
 
-**System Bus** (系统总线)
+### **System Bus**
 
-1. **Address Bus**: specifies (指定) the memory locations (addresses) for the data transfers
+**(系统总线)**
+
+![image-20240108103238116](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20240108103238116.png)
+
+1. **Address Bus**: 
+
+   ​	specifies  the memory locations (addresses) for the data transfers
+
+   ​	*指定数据传输的内存地址*
 2. **Data Bus**: holds the data transfered. Bidirectional
-3. **Control Bus**: contains various lines used to route timing (路由定时) and control signals (控制信号) throughout the system
+
+   ​	*保持数据双向传输*
+3. **Control Bus**: 
+
+   ​	contains various lines used to route timing and control signals throughout the system
+
+​			*包含用于在整个系统中路由定时和控制信号的各种线路*
 
 
 
 ------
 
-**Controllers and Peripherals** (控制器和外设)
+### **Controllers and Peripherals** 
+
+**(控制器和外设)**
 
 1. Peripherals are real devices controlled by controller chips
 2. Controllers are processors like the CPU itself, have control registers
 3. Device driver writes to the registers, thus control it
-4. Controllers are connected to the CPU and to each other by a variety of buses (控制器通过多种总线连接到CPU 和实现相互链接)
+4. Controllers are connected to the CPU and to each other by a variety of buses 
 
+**Translate**
 
+1. 外设是由控制器芯片控制的真实设备
+
+2. 控制器是像CPU本身一样的处理器，具有控制寄存器
+
+3. 设备驱动程序写入寄存器，从而控制它
+
+4. 控制器通过各种总线连接到CPU和彼此之间
+
+   
 
 ------
 
-**Motherboard Chipsets** (主板芯片组)
+### **Motherboard Chipsets** 
+
+**(主板芯片组)**
 
 ![image-20221114213713317](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221114213713317.png)
 
@@ -117,8 +167,6 @@
 
 
 
-------
-
 **Intel Core 2 QX6600** 
 
 1. **33 pins** to transmit the physical memory address (**so there are 2^33 choices of memory locations**)
@@ -129,9 +177,9 @@
 
 **Some physical memory addresses are mapped away!**
 
-**This is why 32-bit OSes have problems using 4 GiB of RAM.**
 
 
+-----
 
 ## Bootstrapping
 
@@ -150,7 +198,7 @@
 
 
 
-**2. MBR – the first 512 bytes, contains**
+**2. MBR – the first 512 bytes, contains**:
 
 - Small code (⩽ 446 Bytes)  e.g. **GRUB stage 1, for loading GRUB stage 2**
 - the primary partition table (16 × 4 = 64 Bytes)
@@ -168,46 +216,52 @@
 
 **5. init — the first user-space program** (systemd)
 
+
+
 ------
-
-
 
 ## Interrupt
 
 **Modern OS are Interrupt Driven**
 
-1. **HW INT** by send a signal to CPU 
-2. **SW INT ** by executing a **System Call**
+1. **Hardware INT**（硬件中断）
 
+   by send a signal to CPU 
+2. **Software INT **（软件中断）
 
+   by executing a **System Call**
+3. **Trap (exception)** （异常捕获）
 
-**Trap (exception)** is a software-generated INT coursed by an error or by a specific request from an user program
+    a software-generated INT coursed by an error or by a specific
+   request from an user program
+4. **Interrupt vector**（中断向量）
 
-**Interrupt vector** is a array of pointers what point to the memory address of **Interrupt Handlers**. 			**The array is indexed by a unique device number**
-
-You can see it:
+   an array of pointers ☛ the memory addresses of interrupt handlers.
+   This array is indexed by a unique device number
 
 ```sh
 $ less /proc/devices
 $ less /proc/interrupts
 ```
 
+**Programmable Interrupt Controllers**
 
+![image-20240108111832082](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20240108111832082.png)
+
+-----
 
 ## System Calls
 
 A System Call i**s how a program requests a service from an OS kernel** and **provides the interface between a process and the OS**
+
+*系统调用是指程序如何向操作系统内核请求服务，而内核提供进程和操作系统之间的接口*
 
 ```sh
 $ man 2 intro
 $ man 2 syscalls
 ```
 
-![System call](/home/user/Pictures/Screenshot from 2022-11-15 15-11-14.png)
-
-
-
-![How a system call be made](/home/user/.config/Typora/typora-user-images/image-20221115155055411.png)
+![How a system call be made](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221115155055411.png)
 
 **How a system call can be made**:
 
@@ -371,7 +425,7 @@ Hello again from Process 265161
 
 ### **Hardware INT vs. Software INT**
 
-![HW INT and SW INT](/home/user/.config/Typora/typora-user-images/image-20221115222730359.png)
+![HW INT and SW INT](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221115222730359.png)
 
 
 
@@ -406,7 +460,7 @@ Processes are like human being, they **are generated**, they are **have a lift**
 
 **Process Creation** **(进程创建)**
 
-![A Process Creation](/home/user/.config/Typora/typora-user-images/image-20221116105610135.png)
+![A Process Creation](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221116105610135.png)
 
 **Attention:**
 
@@ -472,7 +526,7 @@ Child Complete
 
 
 
-![image-20221116194207048](/home/user/.config/Typora/typora-user-images/image-20221116194207048.png)
+![image-20221116194207048](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221116194207048.png)
 
 - **Ready:** The Process already has an execution condition, but does not get CPU and cannot be executed.
 - **Running:** The Process has taken over the CPU, and is running at this time.
@@ -484,7 +538,7 @@ Child Complete
 
 **CPU Switch From Process To Process**
 
-![image-20221118220923175](/home/user/.config/Typora/typora-user-images/image-20221118220923175.png)
+![image-20221118220923175](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221118220923175.png)
 
 
 
@@ -572,7 +626,7 @@ Child Complete
 
 
 
-![image-20221121163919209](/home/user/.config/Typora/typora-user-images/image-20221121163919209.png)
+![image-20221121163919209](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221121163919209.png)
 
 
 
@@ -752,7 +806,7 @@ int main(int argc, char *argv[]) {
 
 **Combine the advantages of two**
 
-![image-20221121214729515](/home/user/.config/Typora/typora-user-images/image-20221121214729515.png)
+![image-20221121214729515](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221121214729515.png)
 
 ### Programming Complications
 
@@ -797,7 +851,7 @@ int main(int argc, char *argv[]) {
 
 **Bounded-Buffer Problem**
 
-![image-20221122205224274](/home/user/.config/Typora/typora-user-images/image-20221122205224274.png)
+![image-20221122205224274](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221122205224274.png)
 
 ![image-20221122205746278](/home/user/.config/Typora/typora-user-images/image-20221122205746278.png)
 
@@ -813,7 +867,7 @@ ls | wc -l
 - **Unidirectional**
 - **read()** would be blocked if nothing written at the other end
 
-![image-20221122212733243](/home/user/.config/Typora/typora-user-images/image-20221122212733243.png)
+![image-20221122212733243](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221122212733243.png)
 
 
 
@@ -931,7 +985,7 @@ int main(int argc, char *argv[]) {
 
 ### **Message Queues**
 
-![image-20221125153954761](/home/user/.config/Typora/typora-user-images/image-20221125153954761.png)
+![image-20221125153954761](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221125153954761.png)
 
 
 

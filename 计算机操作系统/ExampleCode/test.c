@@ -1,19 +1,16 @@
 #include <stdio.h>
+
 typedef struct tyname {
   int id;
-  char *name[];
+  char *name;
 } tyname;
+
 int main() {
 
-  int a;
-  for (int i; i < 100; i++) {
-  }
-  for (int i; i < 100; i++) {
-    printf("HelloWorld");
-    int a;
-    int b;
-    int c;
-  }
-  printf("HelloWorld");
+  char name[] = "as a child";
+  tyname a = {1};
+  a.name = name;
+  printf("%d", a.id);
+  printf("%s", a.name);
   return 0;
 }
