@@ -10,5 +10,7 @@
 int main(int argc, char *argv[]) {
   printf("HelloWorld\n");
   fork();
+  char string = getpid();
   printf("Put a word\n");
+  printf("This Process Id %s", string);
 }
