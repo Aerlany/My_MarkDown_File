@@ -113,7 +113,7 @@ let strLength: number = (someValue as string).length;
 let arr:(string | number)[] = [1,2,"3"];
 ```
 
-### 类型别名
+### 类型别名 type
 
 ```ts
 type CustomArray = (string | number)[]
@@ -192,7 +192,31 @@ function createZoo(): Animal[] {
 
 
 
+### typeof 类型属性
 
+**类型推论实现简化类型书写**
+
+```ts
+type p = { x: number, y: number }
+
+let point: p = { x: 1, y: 2 }
+
+function formate(params: typeof point) {
+    return params.x + params.y;
+}
+
+let formate1 = formate({ x: 1, y: 3 });
+
+console.log(formate1);
+```
+
+1. 使用 `typeof` 操作符来获取变量的类型，结果与字面形式的一致。
+
+2. `typeof`出现在类型注解的位置所处环境就是类型上下文。
+
+3. `typeof`只能用来查询变量或对象的类型，无法查询函数返回值的类型。
+
+   
 
 -----
 
@@ -398,9 +422,9 @@ console.log(functionB);
 //console.log(functionC);
 ```
 
+ 
 
-
-## 接口
+## interface 接口
 
 让我们开发这个示例应用。这里我们使用接口来描述一个拥有`firstName`和`lastName`字段的对象。 在TypeScript里，只在两个类型内部的结构兼容那么这两个类型就是兼容的。 这就允许我们在实现接口时候只要保证包含了接口要求的结构就可以，而不必明确地使用`implements`语句。
 
@@ -547,7 +571,7 @@ class Location {
 
 
 
-## 类
+## class 类
 
 TypeScript支持持基于类的面向对象编程。
 
@@ -557,11 +581,19 @@ TypeScript支持持基于类的面向对象编程。
 
 2、使用`constructor`创建一个类的构造函数。
 
+### class构造函数和实例方法
+
 ```ts
 class Student {
     fullName: string;
+    //构造函数
     constructor(public firstName: string, public middleInitial: string, public lastName: string) {
         this.fullName = firstName + " " + middleInitial + " " + lastName;
+    }
+    
+    //实例方法
+    function fun1(public action: string){
+        this.action = action;
     }
 }
 
@@ -579,7 +611,57 @@ let user = new Student("Jane", "M.", "User");
 document.body.innerHTML = greeter(user);
 ```
 
-**公共，私有与受保护的修饰符**
+### class继承（extents）
+
+子类继承父类，则子类的实例对象就具有了父类和子类的所有`public`属性和方法
+
+```ts
+class Animal {
+    private name: string;
+    protected age: string;
+    protected move() {
+        console.log("Walk 1 step");
+    };
+    private say() {
+        console.log("Hello");
+    };
+}
+
+class Panda extends Animal {
+    test() {
+        this.move();
+    }
+}
+
+let animal = new Panda();
+animal.test()
+```
+
+
+
+### class实现（implements）
+
+当一个类想要实现一个接口，就必须要实现接口中的所有抽象方法
+
+```ts
+interface Animal {
+    walk(): void;
+    say(): void;
+}
+
+class Panda implements Animal {
+    walk(): void {
+        //code
+    }
+    say(): void {
+        //code
+    }
+}
+```
+
+
+
+### **公共，私有与受保护的修饰符**
 
 **public**
 
@@ -593,7 +675,7 @@ class Animal {
 }
 ```
 
-**private**
+**private** ***仅在其声明所在类中可见，实例对象也不可见***
 
 ```ts
 class Animal {
@@ -633,7 +715,7 @@ animal = rhino;
 animal = employee; // 错误: Animal 与 Employee 不兼容.
 ```
 
-**protected**
+**protected**	***仅在其声明所在类和其子类中可见，实例对象也不可见***
 
 ```ts
 class Person {
@@ -687,11 +769,11 @@ let howard = new Employee("Howard", "Sales");
 let john = new Person("John"); // 错误: 'Person' 的构造函数是被保护的.
 ```
 
-**readonly**
+**readonly** ***只读修饰符，外部不可直接访问，自能通过GetSet方法访问***
 
 你可以使用`readonly`关键字将属性设置为只读的。 只读属性必须在声明时或构造函数里被初始化。
 
-```
+```ts
 class Octopus {
     readonly name: string;
     readonly numberOfLegs: number = 8;
@@ -704,6 +786,406 @@ dad.name = "Man with the 3-piece suit"; // 错误! name 是只读的.
 ```
 
 
+
+
+
+## TypeScript 高级特性
+
+### 类型兼容性
+
+两种类型系统：
+
+1. Structural Type System（结构化类型系统）
+2. Nominal Type System（标明类型系统）
+
+Ts采用的是结构化类型系统，类型检查关注的是值所具有的形状，也就是说，在结构化类型系统中，如果两个对象具有相同的形状，则他们就属于一种类型。
+
+#### **类之间的类型兼容性**
+
+对于对象类型来说，a 的成员和b的至少相同，则b兼容a（成员多的可以赋值给成员少的）
+
+```ts
+class a {
+    x: number; y: number
+    say() { }
+}
+class b extends a {
+    z: number;
+    walk() { }
+}
+
+let p: a = new b();
+```
+
+#### **接口之间的类型兼容性**
+
+```ts
+interface a {
+    x: number; y: number
+}
+interface a1 {
+    x: number; y: number
+}
+let x1: a;
+let x2: a1 = x1;
+
+console.log(x2 == x1);//ture
+
+```
+
+#### 函数之间的类型兼容性
+
+
+
+### 交叉类型
+
+交叉类型（&）：类似于接口继承，用于组合多个类型为一个类型（常用于对象类型）
+
+```ts
+interface a {
+    x: number;
+    y: number
+}
+interface b {
+    z: number;
+}
+
+type unixType = a & b;
+let x: unixType = {
+    x: 1,
+    y: 2,
+    z: 1
+};
+
+console.log(x);
+console.log(typeof (x));
+```
+
+**注意：**接口继承和交叉类型的差异比较
+
+```ts
+//接口继承时
+//重新声明一个变量或函数时
+//如果声明时类型不一致，会报错‘类型不兼容’
+interface a {
+    fn1(p: string): void
+}
+interface b extends a {
+    fn1(p: number): void
+}
+```
+
+```ts
+//采用交叉类型时则不会出现
+interface a {
+    fn1(p: string): void
+}
+interface b extends a {
+    fn1(p: number): void
+}
+
+type c = a & b
+//相当于
+//fn1: (p: string | number): void
+```
+
+
+
+### 泛型
+
+**泛型**可以保证类型安全的前提下，让函数实现多种类型兼容，从而实现复用，常用于函数、接口、类中。
+
+#### 泛型函数
+
+**创建泛型函数**
+
+```ts
+function id<Type>(value: Type): Type { return value }
+```
+
+**注意：**
+
+- 类型变量Type，是一种特殊类型的变量，它处理类型而不是值。
+- 该类型变量相当于一个类型容器，能够捕获用户提供的类型（具体是什么类型由用户调用该函数时指定）
+- 因为Type是类型，因此可以将其作为函数参数和返回值的类型，表示参数和返回值具有相同的类型。类型变量Type，可以是任意合法的变量名称。
+
+
+
+**泛型函数的调用**
+
+```ts
+let a = id<string>("10");
+let b = id<number>(10);
+```
+
+- 语法：在函数名称的后面添加＜＞（尖括号），尖括号中指定具体的类型，比如，此处的number。
+- 当传入类型number后，这个类型就会被函数声明时指定的类型变量Type捕获到。
+- 此时，Type的类型就是number，所以，函数id参数和返回值的类型也都是number。同样，如果传入类型string，函数id参数和返回值的类型就都是string。
+
+这样，通过泛型就做到了让id函数与多种不同的类型一起工作，实现了复用的同时保证了类型安全。
+
+
+
+**简化泛型函数的调用**
+
+根据TypeScript类型推论，在有些没有明确指出类型的地方，类型推论会帮助提供类型，所以泛型函数在调用时也可以省略类型
+
+```ts
+let a = id(10);
+```
+
+
+
+**泛型函数类型约束**
+
+添加泛型约束收缩类型，主要有以下两种方式
+
+1. 指定更加具体的类型
+
+   ```ts
+   function id<Type>(value:Type[]):Type { 
+       console.log(value.length)
+       return value
+   }
+   ```
+
+2. 添加约束
+
+   ```ts
+   interface ILength { length: number}
+   
+   function id<Type extends ILength>(value:Type):Type { 
+       console.log(value.length)
+       return value
+   }
+   ```
+
+**解释：**
+
+- 创建描述约束的接口ILength，该接口要求提供length属性。
+- 通过extends关键字使用该接口，为泛型（类型变量）添加约束。
+- 该约束表示：传入的类型必须具有length属性。
+
+注意：传入的实参（比如，数组）只要有length属性即可，这也符合前面讲到的接口的类型兼容性。
+
+
+
+**多个泛型类型参数**
+
+泛型的类型变量可以有多个，并且类型变量之间还可以约束（比如，第二个类型变量受第一个类型变量约束）。
+
+比如，创建一个函数来获取对象中属性的值：
+
+```ts
+function id<Type, Key extends keyof Type>(target: Type, name: Key) {
+    return target[name];
+}
+
+let targetObj = {
+    name: "Tom",
+    age: 21
+}
+
+let a = id(targetObj, "age")
+console.log(a);
+```
+
+**注意：**
+
+1．添加了第二个类型变量Key，两个类型变量之间使用（）逗号分隔。
+
+2．keyof关键字接收一个对象类型，生成其键名称（可能是字符串或数字）的联合类型。
+
+`keyof` is a keyword in TypeScript which is used to extract the key type from an object type.
+
+3．本示例中keyof Type 实际上获取的是person对象所有键的联合类型，也就是：＇name＇｜＇age＇。
+
+4．类型变量Key受Type约束，可以理解为：Key只能是Type所有键中的任意一个，或者说只能访问对象中存在的属性。
+
+
+
+#### 泛型接口
+
+泛型接口：接口也可以配合泛型来使用，以增加其灵活性，增强其复用性。
+
+```ts
+//泛型接口
+interface Animal<Type> {
+    Walk: (param: Type) => Type
+}
+//泛型接口继承时要指定父泛型接口的类型
+interface aquatic<Type> extends Animal<string> {
+    swim: (param: Type) => Type;
+}
+//实现泛型接口
+class Panda implements Animal<string> {
+    Walk(param: string) {
+        return param;
+    }
+}
+
+let a: Animal<string> = {
+    Walk(param) {
+        return param
+    }
+}
+console.log(a.Walk("Tom"));
+
+let b = new Panda()
+console.log(b.Walk("Jery"));
+
+
+let c: aquatic<string> = {
+    swim(param) {
+        return param
+    },
+
+    Walk(param) {
+        return param
+    },
+}
+console.log(c.swim("Aerlany"));
+```
+
+解释：
+
+1. 在接口名称的后面添加<类型变量>，那么，这个接口就变成了泛型接口
+
+2. 接口的类型变量，对接口中所有其他成员可见，也就是接口中所有成员都可以使用类型变量
+
+3. 使用泛型接口时，需要显式指定具体的类型（比如，此处的`Animal<string>`）。
+4. 数组就是泛型接口
+
+
+
+#### 泛型类
+
+```ts
+class Animal<T> {
+    defalutName: T;
+    add: (param: T) => T
+}
+
+let a = new Animal<string>()
+a.defalutName = "100";
+console.log(a.defalutName);
+
+```
+
+**注意：**在创建泛型类时，如果指定构造函数中的参数为泛型参数，那么该类实例化时可以不写`<Type>`泛型。
+
+**泛型工具**
+
+- **`Partial<Type>`**用来构造（创建）一个类型，将Type的所有属性设置为可选	
+
+```ts
+interface Animal<T> {
+    defalutName: T
+}
+
+type AnimalA = Partial<Animal<string>>
+
+/*
+type AnimalA = {
+    defalutName?: string | undefined;
+}
+*/
+```
+
+- **`Readonly<Type>`**用来构造（创建）一个类型，将Type的所有属性设置为readonly（只读）
+
+```ts
+interface Animal<T> {
+    defalutName: T
+}
+
+type AnimalA = Readonly<Animal<string>>
+
+/*
+ type AnimalA = {
+    readonly defalutName: string;
+}
+ */
+```
+
+- **`Pick<Type，Keys>`**从Type中选择一组属性来构造新类型。
+
+```ts
+interface Props {
+    id: string
+    title: string
+    chiLdren: number
+}
+
+type PickProps = Pick<Props, 'id' | 'title'>
+
+/*
+ type PickProps = {
+    id: string;
+    title: string;
+}
+ */
+```
+
+- **`Record<keys,Type>`**构造一个对象类型，属性键为Keys，属性类型为Type。
+
+```ts
+type Records = Record<"a" | "b", string>
+/*
+type Records = {
+    a: string;
+    b: string;
+}
+ */
+```
+
+
+
+### 索引签名类型
+
+当无法确定对象中存在那些属性（或者说对象中可以出现任意个属性），就可以使用到索引签名属性
+
+```ts
+interface AnyObject {
+    [Key: string]: number
+}
+
+let a: AnyObject = {
+    "a": 1,
+    as: 12,
+    sas: 12
+}
+```
+
+解释：
+1.使用`[key:string]`来约束该接口中允许出现的属性名称。表示只要是string类型的属性名称，都可以出现在对象中。
+2.这样，对象obj中就可以出现任意多个属性（比如，a、b等）
+3.key只是一个占位符，可以换成任意合法的变量名称。
+
+隐藏的前置知识：**JS中对象的键是string类型的**。
+
+
+
+### 映射类型
+
+基于旧类型创建新类型，减少重复、提高开发效率。
+
+```ts
+//
+type obj = 'x' | 'y' | 'z'
+    
+type type2 = {
+    [Key in obj]: number
+}
+```
+
+解释：
+
+1. 映射类型是基于索引签名类型的，所以，该语法类似于索引签名类型，也使用了口。
+
+2. KeyinPropkeys表示Key可以是Propkeys联合类型中的任意一个，类似于forin（letkinobj）
+3. 使用映射类型创建的新对象类型Type2和类型Type1结构完全相同。
+4. 注意：映射类型只能在类型别名中使用，不能在接口中使用。
 
 
 
