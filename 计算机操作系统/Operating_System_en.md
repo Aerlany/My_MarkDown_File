@@ -252,18 +252,24 @@ $ less /proc/interrupts
 
 ## System Calls
 
-A System Call i**s how a program requests a service from an OS kernel** and **provides the interface between a process and the OS**
+A System Call i**s how a program requests a service from an OS kernel**
 
-*系统调用是指程序如何向操作系统内核请求服务，而内核提供进程和操作系统之间的接口*
+**provides the interface between a process and the OS**
+
+*系统调用是指程序如何向操作系统内核请求服务，提供进程和操作系统之间的接口*
 
 ```sh
 $ man 2 intro
 $ man 2 syscalls
 ```
 
-![How a system call be made](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221115155055411.png)
+### **Common System Calls** 
+
+![image-20240115105036853](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20240115105036853.png)
 
 **How a system call can be made**:
+
+![How a system call be made](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221115155055411.png)
 
 (1) User program traps to the kernel. 
 
@@ -431,11 +437,17 @@ Hello again from Process 265161
 
 # Part 2. Process And Thread
 
+
+
 ## Processes
 
-**Definition:** ***A process is an instance of a program in execution***  **(定义)**
+### **Definition**
 
+**进程定义**
 
+**A process is an instance of a program in execution**
+
+**进程是计算机系统中正在运行的程序的实例，它是操作系统对程序执行的基本单位**
 
 Processes are like human being, they **are generated**, they are **have a lift**, they optionally generate one or more **child processes**, and eventually they **die**. But a small difference, sex is not common among processes, and each process has **just one parent**.
 
@@ -446,7 +458,22 @@ Processes are like human being, they **are generated**, they are **have a lift**
 
 
 
-**Process Control Block (PCB) (进程控制模块)**
+### Feature
+
+**进程特征**
+
+1. **动态性**：进程是程序的一次执行，它有着创建、活动、暂停、终止等过程，具有一定的生命周期，是动态地产生、变化和消亡的。动态性是进程最基本的特征。
+2. **并发性**：指多个进程实体同存于内存中，能在一段时间内同时运行。引入进程的目的就是使进程能和其他进程并发执行。并发性是进程的重要特征，也是操作系统的重要特征
+3. **独立性**：指进程实体是一个能独立运行、独立获得资源和独立接受调度的基本单位。凡未建立PCB的程序，都不能作为一个独立的单位参与运行。
+4. **异步性**：由于进程的相互制约，使得进程按各自独立的、不可预知的速度向前推进。异步性会导致执行结果的不可再现性，为此在操作系统中必须配置相应的进程同步机制。
+5. **结构性**：每个进程都配置一个PCB对其进行描述。
+
+
+
+### **PCB**
+
+ **Process Control Block (进程控制模块)** *一种数据结构*
+ 为了使参与并发执行的每个程序（含数据）都能独立地运行，在操作系统中必须为之配置一个专门的数据结构，称为进程控制块（PCB）。<img align="right" width="200" height="400" src="https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20240115111934331.png"/>
 
 **Implementation:**
 
@@ -456,41 +483,107 @@ Processes are like human being, they **are generated**, they are **have a lift**
 
 3. A PCB include : **process state, PID, program counter, registers, memory limits, list of open files.....**
 
+**通过PCB对进程进行控制的，亦即系统唯有通过进程的PCB才能感知到该进程的存在**
+
+当进程被创建时，操作系统会为该进程分配一个唯一的、不重复的“身份证号”—— **PID（Process ID，进程ID）**。操作系统区分各个进程就是通过PID以及进程所属用户**ID（UID）**来区分的。所以操作系统要记录PID、UID，还要记录给进程分配了哪些资源（如：**分配了多少内存、正在使用哪些I/O设备、正在使用哪些文件**），还要记录进程的运行情况（如：**CPU使用时间、磁盘使用情况、网络流量使用情况等**）。这些信息都被保存在PCB中。
+
+操作系统需要对各个并发运行的进程进行管理，但凡管理时所需要的信息，都会被放在PCB中。操作系统就是利用PCB来描述进程的基本情况和活动过程，进而控制和管理进程。PCB是进程存在的唯一标志。
 
 
-**Process Creation** **(进程创建)**
+
+### composition
+
+**进程的组成——PCB、程序段、数据段**
+
+![在这里插入图片描述](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/8103a400f3f54c95a27a58ae6965521b.png)
+
+
+
+![在这里插入图片描述](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/afd3baa7f1ae4c5d81fd73b9f1bf94fa.png)
+
+PCB是给操作系统用的，程序段和数据段才是给进程自己用的。所谓创建进程，实质上是创建进程映像中的PCB，而撤销进程，实质上是撤销进程的PCB。注意：进程映像是静态的，进程则是动态的。
+
+所以进程可以有不同的定义，比较典型的定义有：
+
+①进程是程序的一次执行过程。
+②进程是一个程序及其数据在处理机上顺序执行时所发生的活动。
+③进程是具有独立功能的程序在一个数据集合上运行的过程，它是系统进行资源分配和调度的一个独立单位。
+引入进程实体后，我们可以把传统操作系统中的进程定义为：
+
+**“进程是进程实体的运行过程，是系统进行资源分配和调度的一个独立单位”**
+
+
+
+### **Process Creation** 
+
+**(进程创建)**
 
 ![A Process Creation](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221116105610135.png)
 
 **Attention:**
 
-1. *When a process is created, it is almost identical ( 相同 )to its parent, It **receives a (logical) copy of** the parent’s address space, and **executes the same code** as the parent*
+1. *When a process is created, it is almost identical (相同 )to its parent, It **receives a (logical) copy of** the parent’s address space, and **executes the same code** as the parent*
 
 2. *The parent and child have **separate** ( 分开的,单独的 ) copies of the data (stack and heap)*
 
 
 
-**Example**
+### **Process State Transition**
 
-1. fork() in c
 
-```c
-#include <stdio.h>
-#include <unistd.h>
-int main(int argc, char *argv[]) {
-  printf("HelloWorld\n");
-  fork();
-  printf("Put a word\n");
-}
-```
 
-```sh
-HelloWorld
-Put a word
-Put a word
-```
+![image-20221116194207048](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221116194207048.png)
 
-2. exec()
+- **Ready:** The Process already has an execution condition, but does not get CPU and cannot be executed.
+
+  > 就绪态：进程获得了除处理机外的一切所需资源，一旦得到处理机，便可立即运行。系统中处于就绪状态的进程可能有多个，通常将它们排成一个队列，称为就绪队列
+
+- **Running:** The Process has taken over the CPU, and is running at this time.
+
+  > 运行态：进程正在处理机上运行。在单处理机环境下，每个时刻最多只有一个进程处于运行态。而在多处理机系统中，则有多个进程处于执行状态。
+
+- **Blocked:** The state of a Process while waiting for a service, signal, external operation, etc
+
+  > 等待态或封锁态。指正在执行的进程由于发生某事件（如I/O请求、申请缓冲区失败等）暂时无法继续执行时的状态，亦即进程的执行受到阻塞。此时引起进程调度，OS把处理机分配给另一个就绪进程，而让受阻进程处于暂停状态，这种暂停状态称为阻塞态。通常系统将处于阻塞态的进程也排成一个队列，称该队列为阻塞队列。
+
+![在这里插入图片描述](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/21ce25b3840343a288029bee3bd53774.png)
+
+- **创建态**：进程正在被创建，尚未转到就绪态。创建进程通常需要多个步骤：首先申请一个空白的PCB，并向PCB中填写一些控制和管理进程的信息；然后又系统为该进程分配运行时所必需的资源；最后把该进程转入就绪态。
+
+- **结束态**：进程正从系统中消失，可能是进程正常结束或其他原因中断退出运行。进程需要结束运行时，系统首先必须将该进程置为结束态，然后进一步处理资源释放和回收等。
+
+  
+
+**cpu和处理机**
+
+>一、指代不同
+>1、处理机：是处理计算机系统中存储程序和数据，并按照程序规定的步骤执行指令的部件。
+>2、处理器：作为计算机系统的运算和控制核心，是信息处理、程序运行的最终执行单元。
+>
+>二、操作方式不同
+>1、处理机：首先将用户程序和数据通过输入－输出设备输入到主存储器（主存）或辅助存储器。中央处理器从主存取出指令，完成对指令的解释，执行控制操作；若是运算型指令，还须从主存取出数据，由运算器完成运算。
+>2、处理器：根据冯诺依曼体系，CPU的工作分为 5 个阶段取指令阶段、指令译码阶段、执行指令阶段、访存取数和结果写回。
+>
+>三、构成不同
+>1、处理机：包括中央处理器，主存储器，输入-输出接口，加接外围设备就构成完整的计算机系统。
+>2、处理器：主要包括两个部分，即控制器、运算器，其中还包括高速缓冲存储器及实现它们之间联系的数据、控制的总线。
+
+
+
+**CPU Switch From Process To Process**
+
+![image-20221118220923175](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221118220923175.png)
+
+
+
+### **Process Management Example**
+
+| Call                                                         | Description                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `pid_t fork()`                                               | Create a child process identical to the parent               |
+| `pid_t waitpid(pid_t pid, int *wstatus, int options)`        | Wait for a child to terminate                                |
+| `int execl(const char *path, const char *arg, .../* (char  *) NULL */);` | The  exec()  family  of  functions replaces the current process image with a new process image. |
+| `exit(int status)`                                           | terminate the calling process and return status              |
 
 ```c
 #include <stdio.h>
@@ -498,47 +591,53 @@ Put a word
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <wait.h>
 int main(int argc, char *argv[]) {
-  pid_t pid;
-  pid = fork();
-  if (pid < 0) {
-    fprintf(stderr, "Fork failed");
-    exit(EXIT_FAILURE);
-  } else if (pid == 0) {
-    execlp("/bin/ls", "ls", NULL);
-  } else {
-    wait(NULL);
-    puts("Child Complete");
-    exit(EXIT_SUCCESS);
+  pid_t child_pid;
+  printf("This is main process ( %d )\n", getpid());
+
+  // fork() 创建一个子进程，运行语句往下的语句
+  child_pid = fork();
+  printf("fork() return in parent process ( %d )\n", child_pid);
+  // fork() 在父进程中的返回值为 创建的子进程的pid
+  // 但在 子进程中的返回值为 0 | 1
+
+  // 只有子进程调用
+  if (child_pid == 0) {
+    printf("fork() return in child process ( %d )\n", child_pid);
+    printf("This is child process ( %d )\n", getpid());
+    // 运行一个命令或脚本来代替子进程
+    /*execl("/bin/ls", "ls", "-la", NULL);*/
+
+    int count = 1;
+    while (1) {
+      sleep(1);
+      printf("The child process sleep %d s...\n", count);
+      count++;
+      if (count > 10) {
+        // exit(int status) 用于退出调用的进程
+        exit(EXIT_FAILURE);
+      }
+    }
+
   }
-  return 0;
+  // 只有父进程调用
+  else {
+    // 用于储存子进程退出状态
+    int status;
+    // 父进程等待子进程结束
+    pid_t waitpid_return = waitpid(child_pid, &status, 0);
+    printf("The child process exit with status %d\n", status);
+    // 函数返回值为 子进程id
+    printf("waitpid() return %d\n", waitpid_return);
+  }
 }
 ```
 
-```sh
-01-fork.c  02-write.c  03-exec.c  04-exec.c  a.out  FIFO_Example.c  pipe_Example.c  test.c
-Child Complete
-```
-
-
-
-**Process State Transition**
-
-
-
-![image-20221116194207048](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221116194207048.png)
-
-- **Ready:** The Process already has an execution condition, but does not get CPU and cannot be executed.
-- **Running:** The Process has taken over the CPU, and is running at this time.
-- **Blocked:** The state of a Process while waiting for a service, signal, external operation, etc.
 
 
 
 
-
-**CPU Switch From Process To Process**
-
-![image-20221118220923175](https://github.com/Aerlany/Images-of-mine/raw/main/PicGo/image-20221118220923175.png)
 
 
 
@@ -594,7 +693,7 @@ Child Complete
 
 ​	**NOTE**
 
-​	**进程间通信（IPC，InterProcess Communication）**是指在不同进程之间传播或交换信息。
+​	**进程间通信（IPC，Inter Process Communication）**是指在不同进程之间传播或交换信息。
 
 
 
