@@ -10,9 +10,10 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Fork failed");
     exit(EXIT_FAILURE);
   } else if (pid == 0) {
-    execlp("/bin/ls", "ls", NULL);
+    sleep(10);
+    execl("/bin/ls", "ls", "-la", NULL);
   } else {
-    wait(NULL);
+    waitpid(pid, NULL, 0);
     puts("Child Complete");
     exit(EXIT_SUCCESS);
   }

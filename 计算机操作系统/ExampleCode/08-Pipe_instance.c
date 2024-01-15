@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
       puts("");
 
       close(pfd[0]);
-      _exit(EXIT_SUCCESS);
+      exit(EXIT_SUCCESS);
     }
 
   default:
