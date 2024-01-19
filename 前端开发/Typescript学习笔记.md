@@ -1168,9 +1168,12 @@ let a: AnyObject = {
 
 ### 映射类型
 
+映射类型只能在`type`关键字，也就是类型别名中使用。
+
 基于旧类型创建新类型，减少重复、提高开发效率。
 
 ```ts
+//映射只能接收 string | number | symbol
 //
 type obj = 'x' | 'y' | 'z'
     
@@ -1179,11 +1182,17 @@ type type2 = {
 }
 ```
 
+```
+
+```
+
+
+
 解释：
 
 1. 映射类型是基于索引签名类型的，所以，该语法类似于索引签名类型，也使用了口。
 
-2. KeyinPropkeys表示Key可以是Propkeys联合类型中的任意一个，类似于forin（letkinobj）
+2. KeyinPropkeys表示Key可以是Propkeys联合类型中的任意一个，类似于forin
 3. 使用映射类型创建的新对象类型Type2和类型Type1结构完全相同。
 4. 注意：映射类型只能在类型别名中使用，不能在接口中使用。
 
