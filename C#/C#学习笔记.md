@@ -50,3 +50,9 @@ namespace ConsoleHelloWord.lenarnCode
 
 
 
+
+
+```C#
+public static bool Getdevicestate8(byte data2, int postion) => 0 != (data2 & (byte)(1 << postion));
+```
+
