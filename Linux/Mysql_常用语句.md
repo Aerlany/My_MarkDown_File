@@ -25,7 +25,7 @@ create table 表名(
 
 ***其它可以设置为：***
 
-***primary	key（主键）***
+***primary key（主键）***
 
 ***auto_increment（自增）***
 
@@ -340,6 +340,8 @@ ON table1.column_name = table2.column_name;
 
 #### ( 外键约束 )
 
+添加外键时，应该确保附表中的链接主键有唯一约束。
+
 **添加外键**
 
 ```sql
@@ -499,5 +501,21 @@ mysql> alter user '用户名'@'host' identified by '密码';
 
 ```sql
 mysql> flush privileges; 
+```
+
+
+
+### 五、MySQL初始化
+
+`初始化服务密码`
+
+```sh
+ mysqld --initialize --console
+```
+
+`使用初始化的密码进行登录`
+
+```sh
+mysql -uroot -p
 ```
 

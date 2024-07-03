@@ -192,7 +192,7 @@ Other recommandation include tomatoes, cucumbers, eggplant, celery, asparagus, w
 
 ## sentences
 
-| Sentences                      | Chinses Meaning |
-| ------------------------------ | --------------- |
-| Example to the contrary abound | 大量相反的例子  |
+| Sentences                      | Meaning        |
+| ------------------------------ | -------------- |
+| Example to the contrary abound | 大量相反的例子 |
 
