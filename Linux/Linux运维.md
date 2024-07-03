@@ -930,6 +930,15 @@ ssh-copy-id root@192.168.1.106
 
 ## 八、Linux  NVM安装配置
 
+列出远端所有版本
+
+```shell
+nvm ls-remote
+nvm ls available
+```
+
+
+
 ```sh
 # 配置镜像
 export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node/
@@ -1112,6 +1121,38 @@ firewall-cmd --zone=public --query-port=80/tcp
 ```sh
 firewall-cmd --zone=public --remove-port=80/tcp --permanent
 ```
+
+
+
+## 十二、Linux  解压命令
+
+## 十三、Linux  普通用户赋予管理员权限
+
+1、将`username`用户加入到`sudo`组中
+
+```sh
+sudo usermod -aG sudo username
+```
+
+2、修改`/etc/passwd`文件
+
+```apl
+# root用户群组id为0
+root:x:0:0:root:/root:/bin/bash
+
+# 将username用户的group_id设置为0（就是将他加入到root群组）
+username:x:1000:0:username:/home/username:/bin/bash
+```
+
+3、将下列语句加入到`/etc/sudoers`中
+
+```sh
+username ALL=(ALL:ALL) NOPASSWD:ALL
+```
+
+
+
+
 
 # Linux命令排雷
 
@@ -1355,7 +1396,7 @@ somecommand |xargs -item  command
   -P 修改最大的进程数，默认是1，为0时候为as many as it can ，这个例子我没有想到，应该平时都用不到的吧。
   ```
 
-  ### 实例
+  实例
 
   xargs 用作替换工具，读取输入数据重新格式化后输出。
 
